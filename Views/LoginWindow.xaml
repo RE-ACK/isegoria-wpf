@@ -15,16 +15,16 @@
     <Window.Resources>
         <!-- 입력 필드 스타일 -->
         <Style x:Key="InputBoxStyle" TargetType="TextBox">
-            <Setter Property="Background" Value="#1A1A2E"/>
-            <Setter Property="Foreground" Value="#CCCCEE"/>
-            <Setter Property="CaretBrush" Value="#9B7FFF"/>
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CaretBrush" Value="White"/>
             <Setter Property="FontFamily" Value="Irish Grover"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Height" Value="48"/>
             <Setter Property="Padding" Value="16,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#3D2B7A"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
@@ -38,11 +38,6 @@
                                               VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter Property="BorderBrush" Value="#7646FF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -50,16 +45,16 @@
 
         <!-- 비밀번호 박스 스타일 -->
         <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
-            <Setter Property="Background" Value="#1A1A2E"/>
-            <Setter Property="Foreground" Value="#CCCCEE"/>
-            <Setter Property="CaretBrush" Value="#9B7FFF"/>
+            <Setter Property="Background" Value="{StaticResource BackgroundColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CaretBrush" Value="White"/>
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Height" Value="48"/>
             <Setter Property="Padding" Value="16,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#3D2B7A"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="PasswordBox">
@@ -71,11 +66,6 @@
                                           Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="Center"/>
                         </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsFocused" Value="True">
-                                <Setter Property="BorderBrush" Value="#7646FF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -96,8 +86,8 @@
                         <Border x:Name="ButtonBorder" CornerRadius="10">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                    <GradientStop Color="#743CFF" Offset="0"/>
-                                    <GradientStop Color="#8083FF" Offset="1"/>
+                                    <GradientStop Color="{StaticResource GradientStart}" Offset="0"/>
+                                    <GradientStop Color="{StaticResource GradientEnd}" Offset="1"/>
                                 </LinearGradientBrush>
                             </Border.Background>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -143,38 +133,10 @@
         </Style>
     </Window.Resources>
 
-    <Border CornerRadius="18" ClipToBounds="True">
-        <Border.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#12102A" Offset="0"/>
-                <GradientStop Color="#1E1540" Offset="0.5"/>
-                <GradientStop Color="#160F35" Offset="1"/>
-            </LinearGradientBrush>
-        </Border.Background>
+    <Border CornerRadius="18" Background="{StaticResource BackgroundColor}" ClipToBounds="True">
 
         <Grid>
             <!-- 배경 장식 글로우 -->
-            <Ellipse Width="300" Height="300"
-                     HorizontalAlignment="Right" VerticalAlignment="Top"
-                     Margin="0,-80,-80,0">
-                <Ellipse.Fill>
-                    <RadialGradientBrush>
-                        <GradientStop Color="#25186080" Offset="0"/>
-                        <GradientStop Color="#00160940" Offset="1"/>
-                    </RadialGradientBrush>
-                </Ellipse.Fill>
-            </Ellipse>
-
-            <Ellipse Width="250" Height="250"
-                     HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                     Margin="-60,0,0,-60">
-                <Ellipse.Fill>
-                    <RadialGradientBrush>
-                        <GradientStop Color="#20743CFF" Offset="0"/>
-                        <GradientStop Color="#00743CFF" Offset="1"/>
-                    </RadialGradientBrush>
-                </Ellipse.Fill>
-            </Ellipse>
 
             <!-- 닫기 버튼 -->
             <Button HorizontalAlignment="Right" VerticalAlignment="Top"
@@ -187,7 +149,7 @@
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="CloseBorder" Background="Transparent" CornerRadius="6" Width="28" Height="28">
-                            <TextBlock Text="✕" Foreground="#665599" FontSize="13"
+                            <TextBlock Text="✕" Foreground="White" FontSize="13"
                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -213,22 +175,17 @@
                 <TextBlock Text="ISEGORIA"
                            HorizontalAlignment="Center"
                            FontFamily="{StaticResource IrishGrover}"
+                           Foreground="White"
                            FontSize="22"
                            FontWeight="Light"
                            Margin="0,0,0,48">
-                    <TextBlock.Foreground>
-                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                            <GradientStop Color="#B09FFF" Offset="0"/>
-                            <GradientStop Color="#D0C8FF" Offset="1"/>
-                        </LinearGradientBrush>
-                    </TextBlock.Foreground>
                 </TextBlock>
 
                 <!-- 아이디 입력 -->
                 <StackPanel Margin="0,0,0,16">
                     <TextBlock Text="아이디"
-                               Foreground="#8878CC"
-                               FontFamily="Segoe UI"
+                               Foreground="White"
+                               FontFamily="{StaticResource Pretendard}"
                                FontSize="12"
                                Margin="4,0,0,6"/>
                     <TextBox x:Name="UsernameInput"
@@ -238,8 +195,8 @@
                 <!-- 패스워드 입력 -->
                 <StackPanel Margin="0,0,0,24">
                     <TextBlock Text="비밀번호"
-                               Foreground="#8878CC"
-                               FontFamily="Segoe UI"
+                               Foreground="White"
+                               FontFamily="{StaticResource Pretendard}"
                                FontSize="12"
                                Margin="4,0,0,6"/>
                     <PasswordBox x:Name="PasswordInput"
@@ -255,13 +212,15 @@
                 <!-- 아이디/비밀번호 찾기 -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Content="아이디 찾기"
+                            FontSize="14"
                             Style="{StaticResource LinkButtonStyle}"
                             Click="FindId_Click"/>
                     <TextBlock Text="    |    "
-                               Foreground="#3D2B7A"
+                               Foreground="White"
                                VerticalAlignment="Center"
-                               FontSize="13"/>
+                               FontSize="14"/>
                     <Button Content="비밀번호 찾기"
+                            FontSize="14"
                             Style="{StaticResource LinkButtonStyle}"
                             Click="FindPassword_Click"/>
                 </StackPanel>
@@ -270,3 +229,4 @@
     </Border>
     
 </Window>
+ 
