@@ -12,12 +12,47 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\add_circle_icon.png" />
+    <None Remove="Assets\add_icon.png" />
+    <None Remove="Assets\arrow_right_icon.png" />
+    <None Remove="Assets\call_slash_icon.png" />
+    <None Remove="Assets\chat_icon.png" />
+    <None Remove="Assets\close_icon.png" />
     <None Remove="Assets\Fonts\IrishGrover-Regular.ttf" />
     <None Remove="Assets\Fonts\PretendardVariable.ttf" />
     <None Remove="Assets\isegoria_icon.png" />
+    <None Remove="Assets\mic_icon.png" />
+    <None Remove="Assets\mic_mute_icon.png" />
+    <None Remove="Assets\minimized_icon.png" />
+    <None Remove="Assets\search_icon.png" />
+    <None Remove="Assets\send_icon.png" />
+    <None Remove="Assets\setting_icon.png" />
+    <None Remove="Assets\voice_icon.png" />
+    <None Remove="Assets\voice_mute_icon.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\add_circle_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\add_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\arrow_right_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\call_slash_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\chat_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\close_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\default_profile.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Fonts\IrishGrover-Regular.ttf" />
   </ItemGroup>
 
@@ -41,6 +76,30 @@
   <ItemGroup>
     <Resource Include="Assets\Fonts\PretendardVariable.ttf" />
     <Resource Include="Assets\isegoria_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\mic_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\mic_mute_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\minimized_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\search_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\send_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\setting_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\voice_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\voice_mute_icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

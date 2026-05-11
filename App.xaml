@@ -14,6 +14,14 @@
             
             <SolidColorBrush x:Key="BorderColor" Color="{StaticResource GradientStart}"/>
             <SolidColorBrush x:Key="BackgroundColor" Color="#283044"/>
+            <SolidColorBrush x:Key="SideBarColor" Color="#131B2E" />
+            <SolidColorBrush x:Key="ButtonHoverColor" Color="#33743CFF" />
+            <SolidColorBrush x:Key="CreateServerColor" Color="#2DB7F2" />
+            <SolidColorBrush x:Key="JoinServerColor" Color="#4EDEA3" />
+            <SolidColorBrush x:Key="ChannelBasicColor" Color="#353D53" />
+            <SolidColorBrush x:Key="ChannelBorderColor" Color="#535761" />
+
+            <!-- 스타일 -->
 
         </ResourceDictionary>
          

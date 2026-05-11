@@ -1,0 +1,212 @@
+﻿<Window x:Class="isegoria_wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:isegoria_wpf"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="700"
+        Width="1280"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent">
+    <Window.Resources>
+        <Style x:Key="ServerButtonStyle"
+               TargetType="Button">
+            <Setter Property="Width"
+                    Value="50" />
+            <Setter Property="Height"
+                    Value="50" />
+            <Setter Property="FontSize"
+                    Value="15" />
+            <Setter Property="FontWeight"
+                    Value="SemiBold" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                CornerRadius="10">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0"
+                                                     EndPoint="1,0">
+                                    <GradientStop Color="{StaticResource GradientStart}"
+                                                  Offset="0" />
+                                    <GradientStop Color="{StaticResource GradientEnd}"
+                                                  Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Opacity"
+                                        Value="0.88" />
+                            </Trigger>
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Opacity"
+                                        Value="0.75" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="12"
+            Background="{StaticResource BackgroundColor}"
+            ClipToBounds="True">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <!-- 사이드바 -->
+                <ColumnDefinition Width="*" />
+                <!-- 나머지 -->
+            </Grid.ColumnDefinitions>
+
+            <!-- 사이드바 (전체 높이) -->
+            <Border Grid.Column="0"
+                    Background="{StaticResource SideBarColor}"
+                    Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <!-- 서버 목록 -->
+                        <RowDefinition Height="Auto" />
+                        <!-- 프로필 -->
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0"
+                                  VerticalScrollBarVisibility="Hidden">
+                        <StackPanel x:Name="ServerList">
+                            
+                            <Button x:Name="AddServerButton"
+                                    Style="{StaticResource ServerButtonStyle}"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,8"
+                                    Click="AddServerButton_Click">
+                                <Image Source="/Assets/add_icon.png"
+                                       Width="25"
+                                       Height="25" />
+                            </Button>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Button Grid.Row="1"
+                            Width="65"
+                            Height="65"
+                            HorizontalAlignment="Center"
+                            Cursor="Hand"
+                            Margin="0,8,0,0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Ellipse Width="65"
+                                         Height="65">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="/Assets/default_profile.png" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- 오른쪽 영역 -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <!-- 상단바 -->
+                    <RowDefinition Height="*" />
+                    <!-- 콘텐츠 -->
+                </Grid.RowDefinitions>
+
+                <!-- 상단바 드래그 영역 -->
+                <Border Grid.Row="0"
+                        Background="Transparent"
+                        MouseDown="TopBar_MouseDown" />
+
+                <!-- 상단 버튼 -->
+                <StackPanel Grid.Row="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Margin="0,0,14,0">
+
+                    <Button Width="28"
+                            Height="28"
+                            Cursor="Hand"
+                            Click="MinimizeButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="MinBorder"
+                                        Background="Transparent"
+                                        CornerRadius="6">
+                                    <Image Source="/Assets/minimized_icon.png"
+                                           Width="14"
+                                           Height="14"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="MinBorder"
+                                                Property="Background"
+                                                Value="{StaticResource ButtonHoverColor}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Button Width="28"
+                            Height="28"
+                            Cursor="Hand"
+                            Click="CloseButton_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="CloseBorder"
+                                        Background="Transparent"
+                                        CornerRadius="6">
+                                    <Image Source="/Assets/close_icon.png"
+                                           Width="14"
+                                           Height="14"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver"
+                                             Value="True">
+                                        <Setter TargetName="CloseBorder"
+                                                Property="Background"
+                                                Value="{StaticResource ButtonHoverColor}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+
+                <!-- 메인 콘텐츠 -->
+                <ContentControl Grid.Row="1"
+                                x:Name="MainContent" />
+            </Grid>
+
+        </Grid>
+    </Border>
+</Window>

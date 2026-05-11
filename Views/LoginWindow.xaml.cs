@@ -39,6 +39,10 @@ namespace isegoria_wpf.Views
 
             //@TODO 로그인 로직
             Debug.WriteLine("username : " + username + "\npassword : " + password);
+
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+            this.Close();
         }
 
         private void FindId_Click(object sender, RoutedEventArgs e)
@@ -49,7 +53,12 @@ namespace isegoria_wpf.Views
 
         private void FindPassword_Click(object sender, RoutedEventArgs e)
         {
-            //@TODO: 비밀번호 찾기 창 열기
+                 //@TODO: 아이디 찾기 창 열기
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
         }
     }
 }
