@@ -13,14 +13,13 @@ using System.Windows.Shapes;
 
 namespace isegoria_wpf.Views
 {
-    /// <summary>
-    /// LoginWindow.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class LoginWindow : Window
     {
         public LoginWindow()
         {
             InitializeComponent();
+
+            NavigateTo(new LoginView());
 
             this.MouseLeftButtonDown += (s, e) =>
             {
@@ -29,32 +28,12 @@ namespace isegoria_wpf.Views
             };
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-            => this.Close();
-
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        public void NavigateTo(UserControl view)
         {
-            string username = UsernameInput.Text;
-            string password = PasswordInput.Password;
-
-            //@TODO 로그인 로직
-            Debug.WriteLine("username : " + username + "\npassword : " + password);
-
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-            this.Close();
+            LoginContent.Content = view;
         }
 
-        private void FindId_Click(object sender, RoutedEventArgs e)
-        {
-            //@TODO: 아이디 찾기 창 열기
-
-        }
-
-        private void FindPassword_Click(object sender, RoutedEventArgs e)
-        {
-                 //@TODO: 아이디 찾기 창 열기
-        }
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => this.Close();
 
         private void MinimizeButton_Click(object sender, RoutedEventArgs e)
         {

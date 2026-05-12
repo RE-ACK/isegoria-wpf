@@ -22,7 +22,177 @@
             <SolidColorBrush x:Key="ChannelBorderColor" Color="#535761" />
 
             <!-- 스타일 -->
+            <!-- 입력 필드 스타일 -->
+            <Style x:Key="InputBoxStyle"
+                   TargetType="TextBox">
+                <Setter Property="Background"
+                        Value="{StaticResource BackgroundColor}" />
+                <Setter Property="Foreground"
+                        Value="White" />
+                <Setter Property="CaretBrush"
+                        Value="White" />
+                <Setter Property="FontFamily"
+                        Value="{StaticResource Pretendard}" />
+                <Setter Property="FontSize"
+                        Value="14" />
+                <Setter Property="Height"
+                        Value="48" />
+                <Setter Property="Padding"
+                        Value="16,0" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Center" />
+                <Setter Property="BorderThickness"
+                        Value="1" />
+                <Setter Property="BorderBrush"
+                        Value="{StaticResource BorderColor}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <Grid>
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
+            <!-- 비밀번호 박스 스타일 -->
+            <Style x:Key="PasswordBoxStyle"
+                   TargetType="PasswordBox">
+                <Setter Property="Background"
+                        Value="{StaticResource BackgroundColor}" />
+                <Setter Property="Foreground"
+                        Value="White" />
+                <Setter Property="CaretBrush"
+                        Value="White" />
+                <Setter Property="FontFamily"
+                        Value="{StaticResource Pretendard}" />
+                <Setter Property="FontSize"
+                        Value="14" />
+                <Setter Property="Height"
+                        Value="48" />
+                <Setter Property="Padding"
+                        Value="16,0" />
+                <Setter Property="VerticalContentAlignment"
+                        Value="Center" />
+                <Setter Property="BorderThickness"
+                        Value="1" />
+                <Setter Property="BorderBrush"
+                        Value="{StaticResource BorderColor}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="PasswordBox">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="10">
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                              Margin="{TemplateBinding Padding}"
+                                              VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- 로그인 버튼 스타일 -->
+            <Style x:Key="LoginButtonStyle"
+                   TargetType="Button">
+                <Setter Property="Height"
+                        Value="48" />
+                <Setter Property="FontFamily"
+                        Value="{StaticResource Pretendard}" />
+                <Setter Property="FontSize"
+                        Value="15" />
+                <Setter Property="FontWeight"
+                        Value="Bold" />
+                <Setter Property="Foreground"
+                        Value="White" />
+                <Setter Property="Cursor"
+                        Value="Hand" />
+                <Setter Property="BorderThickness"
+                        Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="ButtonBorder"
+                                    CornerRadius="10">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0"
+                                                         EndPoint="1,0">
+                                        <GradientStop Color="{StaticResource GradientStart}"
+                                                      Offset="0" />
+                                        <GradientStop Color="{StaticResource GradientEnd}"
+                                                      Offset="1" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ContentPresenter HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter TargetName="ButtonBorder"
+                                            Property="Opacity"
+                                            Value="0.88" />
+                                </Trigger>
+                                <Trigger Property="IsPressed"
+                                         Value="True">
+                                    <Setter TargetName="ButtonBorder"
+                                            Property="Opacity"
+                                            Value="0.75" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- 링크 버튼 스타일 -->
+            <Style x:Key="LinkButtonStyle"
+                   TargetType="Button">
+                <Setter Property="FontFamily"
+                        Value="Segoe UI" />
+                <Setter Property="FontSize"
+                        Value="13" />
+                <Setter Property="Foreground"
+                        Value="#8878CC" />
+                <Setter Property="Background"
+                        Value="Transparent" />
+                <Setter Property="BorderThickness"
+                        Value="0" />
+                <Setter Property="Cursor"
+                        Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock x:Name="LinkText"
+                                       Text="{TemplateBinding Content}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontFamily="{TemplateBinding FontFamily}"
+                                       FontSize="{TemplateBinding FontSize}" />
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"
+                                         Value="True">
+                                    <Setter TargetName="LinkText"
+                                            Property="Foreground"
+                                            Value="#B8A8FF" />
+                                    <Setter TargetName="LinkText"
+                                            Property="TextDecorations"
+                                            Value="Underline" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
          
     </Application.Resources>

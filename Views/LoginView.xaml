@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="isegoria_wpf.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:isegoria_wpf.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             xmlns:vm="clr-namespace:isegoria_wpf.ViewModels">
+
+    <UserControl.DataContext>
+        <vm:AuthViewModel />
+    </UserControl.DataContext>
+
+    <StackPanel VerticalAlignment="Center"
+                Margin="60,0">
+
+        <!-- 로고 아이콘 -->
+        <Image Source="/Assets/isegoria_icon.png"
+               Width="72"
+               Height="72"
+               HorizontalAlignment="Center"
+               Margin="0,0,0,10"
+               RenderOptions.BitmapScalingMode="HighQuality" />
+
+        <!-- 브랜드명 -->
+        <TextBlock Text="ISEGORIA"
+                   HorizontalAlignment="Center"
+                   FontFamily="{StaticResource IrishGrover}"
+                   Foreground="White"
+                   FontSize="22"
+                   FontWeight="Light"
+                   Margin="0,0,0,48">
+        </TextBlock>
+
+        <!-- 아이디 입력 -->
+        <StackPanel Margin="0,0,0,16">
+            <TextBlock Text="아이디"
+                       Foreground="White"
+                       FontFamily="{StaticResource Pretendard}"
+                       FontSize="12"
+                       Margin="4,0,0,6" />
+            <TextBox x:Name="UserIdInput"
+                     Text="{Binding UserId, UpdateSourceTrigger=PropertyChanged}"
+                     Style="{StaticResource InputBoxStyle}" />
+        </StackPanel>
+
+        <!-- 패스워드 입력 -->
+        <StackPanel Margin="0,0,0,24">
+            <TextBlock Text="비밀번호"
+                       Foreground="White"
+                       FontFamily="{StaticResource Pretendard}"
+                       FontSize="12"
+                       Margin="4,0,0,6" />
+            <PasswordBox x:Name="PasswordInput"
+                         Style="{StaticResource PasswordBoxStyle}" />
+        </StackPanel>
+
+        <!-- 에러 메세지 -->
+        <TextBlock Margin="0,0,0,24"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Foreground="Red"
+                   Text="{Binding ErrorMessage}" />
+
+        <!-- 로그인 버튼 -->
+        <Button Content="로그인"
+                Style="{StaticResource LoginButtonStyle}"
+                Command="{Binding LoginCommand}"
+                Click="LoginButton_Click"
+                Margin="0,0,0,20" />
+
+        <!-- 아이디/비밀번호 찾기 -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Content="회원가입"
+                    FontSize="14"
+                    Style="{StaticResource LinkButtonStyle}"
+                    Click="Register_Click" />
+            <TextBlock Text="    |    "
+                       Foreground="White"
+                       VerticalAlignment="Center"
+                       FontSize="14" />
+            <Button Content="비밀번호 찾기"
+                    FontSize="14"
+                    Style="{StaticResource LinkButtonStyle}"
+                    Click="FindPassword_Click" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
