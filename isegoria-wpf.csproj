@@ -29,6 +29,7 @@
     <None Remove="Assets\search_icon.png" />
     <None Remove="Assets\send_icon.png" />
     <None Remove="Assets\setting_icon.png" />
+    <None Remove="Assets\user_edit_icon.png" />
     <None Remove="Assets\voice_icon.png" />
     <None Remove="Assets\voice_mute_icon.png" />
   </ItemGroup>
@@ -102,6 +103,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\setting_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\user_edit_icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\voice_icon.png">

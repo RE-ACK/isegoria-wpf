@@ -74,5 +74,14 @@ namespace isegoria_wpf.ViewModels
             Debug.WriteLine("userId : " + UserId);
         }
 
+
+        [RelayCommand]
+        private async Task UpdateUserInfoAsync()
+        {
+            //@TODO REST API 유저 정보 업데이트
+
+            Debug.WriteLine("UpdateUserInfo 호출됨");
+        }
+            
     }
 }

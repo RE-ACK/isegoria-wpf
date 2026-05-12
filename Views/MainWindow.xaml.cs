@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using isegoria_wpf.Views.Modals;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -43,6 +44,14 @@ namespace isegoria_wpf
         // ============================================================================== //
         // Callback
         // ============================================================================== //
+
+        private void UserIconButton_Click(object sender, RoutedEventArgs e)
+        {
+            var modal = new ProfileModal();
+            modal.Owner = Window.GetWindow(this);
+
+            modal.ShowDialog();
+        }
         private void AddServerButton_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = new Views.WelcomeView();

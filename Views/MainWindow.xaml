@@ -93,7 +93,7 @@
                     <ScrollViewer Grid.Row="0"
                                   VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="ServerList">
-                            
+
                             <Button x:Name="AddServerButton"
                                     Style="{StaticResource ServerButtonStyle}"
                                     HorizontalAlignment="Center"
@@ -111,7 +111,8 @@
                             Height="65"
                             HorizontalAlignment="Center"
                             Cursor="Hand"
-                            Margin="0,8,0,0">
+                            Margin="0,8,0,0"
+                            Click="UserIconButton_Click">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Ellipse Width="65"
@@ -131,7 +132,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50" />
                     <!-- 상단바 -->
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="23*" />
+                    <RowDefinition Height="3*" />
                     <!-- 콘텐츠 -->
                 </Grid.RowDefinitions>
 
@@ -141,11 +143,10 @@
                         MouseDown="TopBar_MouseDown" />
 
                 <!-- 상단 버튼 -->
-                <StackPanel Grid.Row="0"
-                            HorizontalAlignment="Right"
+                <StackPanel HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Orientation="Horizontal"
-                            Margin="0,0,14,0">
+                            Margin="1110,0,0,0">
 
                     <Button Width="28"
                             Height="28"
@@ -204,7 +205,8 @@
 
                 <!-- 메인 콘텐츠 -->
                 <ContentControl Grid.Row="1"
-                                x:Name="MainContent" />
+                                x:Name="MainContent"
+                                Grid.RowSpan="2" />
             </Grid>
 
         </Grid>
