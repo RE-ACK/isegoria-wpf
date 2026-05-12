@@ -39,9 +39,9 @@ namespace isegoria_wpf.ViewModels
             }
 
             // 성공 시 메인윈도우 전환
-            //var mainWindow = new MainWindow();
-            //mainWindow.Show();
-            //Application.Current.Windows[0]?.Close();
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+            Application.Current.Windows[0]?.Close();
 
             Debug.WriteLine("userId : " + UserId + "password : " +  Password);
         }

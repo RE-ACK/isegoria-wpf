@@ -129,6 +129,7 @@
                     <Button Content="지금 생성하기"
                             Style="{StaticResource CardButtonStyle}"
                             Background="{StaticResource CreateServerColor}"
+                            Click="CreateServerButton_Click"
                             Width="180" />
                 </StackPanel>
             </Border>
@@ -170,6 +171,7 @@
                     <Button Content="입장코드 입력하기"
                             Style="{StaticResource CardButtonStyle}"
                             Background="{StaticResource JoinServerColor}"
+                            Click="JoinServerButton_Click"
                             Width="180" />
                 </StackPanel>
             </Border>

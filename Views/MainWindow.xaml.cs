@@ -25,7 +25,7 @@ namespace isegoria_wpf
         }
 
 
-        private void UpdateMainContent()
+        public void UpdateMainContent()
         {
             bool hasServer = ServerList.Children.Count > 1;
 
@@ -45,27 +45,7 @@ namespace isegoria_wpf
         // ============================================================================== //
         private void AddServerButton_Click(object sender, RoutedEventArgs e)
         {
-            //MainContent.Content = new Views.WelcomeView();
-
-            var serverButton = new Button
-            {
-                Style = (Style)FindResource("ServerButtonStyle"),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 8)
-            };
-
-            serverButton.Content = new Image
-            {
-                Source = new BitmapImage(new Uri("/Assets/default_profile.png", UriKind.Relative)),
-                Width = 35,
-                Height = 35
-            };
-
-            int addButtonIndex = ServerList.Children.IndexOf(AddServerButton);
-            ServerList.Children.Insert(addButtonIndex, serverButton);
-
-            UpdateMainContent();
-
+            MainContent.Content = new Views.WelcomeView();
         }
 
         private void TopBar_MouseDown(object sender, MouseButtonEventArgs e)

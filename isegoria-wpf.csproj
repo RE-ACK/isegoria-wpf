@@ -21,6 +21,7 @@
     <None Remove="Assets\close_icon.png" />
     <None Remove="Assets\Fonts\IrishGrover-Regular.ttf" />
     <None Remove="Assets\Fonts\PretendardVariable.ttf" />
+    <None Remove="Assets\img_add_icon.png" />
     <None Remove="Assets\isegoria_icon.png" />
     <None Remove="Assets\mic_icon.png" />
     <None Remove="Assets\mic_mute_icon.png" />
@@ -79,6 +80,9 @@
 
   <ItemGroup>
     <Resource Include="Assets\Fonts\PretendardVariable.ttf" />
+    <Resource Include="Assets\img_add_icon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\isegoria_icon.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
