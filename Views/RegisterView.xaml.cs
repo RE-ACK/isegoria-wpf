@@ -22,6 +22,15 @@ namespace isegoria_wpf.Views
         public RegisterView()
         {
             InitializeComponent();
+            
+            if(DataContext is AuthViewModel vm)
+            {
+                vm.OnRegisterSuccess = () =>
+                {
+                    var parent = Window.GetWindow(this) as LoginWindow;
+                    parent?.NavigateTo(new LoginView());
+                };
+            }
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)

@@ -50,6 +50,7 @@
 
                         <!-- 프로필 이미지 -->
                         <Button Grid.Column="0"
+                                x:Name="ProfileImageButton"
                                 Width="48"
                                 Height="48"
                                 Cursor="Hand"
@@ -66,7 +67,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        
+
                         <!-- 유저명 / 태그 -->
                         <StackPanel Grid.Column="1"
                                     VerticalAlignment="Center"
@@ -86,7 +87,8 @@
                                      Visibility="Collapsed"
                                      Height="32" />
 
-                            <TextBlock Text="#0001"
+                            <TextBlock x:Name="UserTagText"
+                                       Text="#0001"
                                        Foreground="{StaticResource BorderColor}"
                                        FontSize="11" />
                         </StackPanel>
@@ -137,7 +139,7 @@
                         <ColumnDefinition Width="12" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    
+
                     <Button Grid.Column="0"
                             Height="44"
                             Cursor="Hand"

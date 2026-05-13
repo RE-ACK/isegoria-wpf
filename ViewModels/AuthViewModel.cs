@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using isegoria_wpf.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,30 +27,42 @@ namespace isegoria_wpf.ViewModels
 
         public string RegisterPassword { get; set; } = string.Empty;
 
+        //=======================================================================//
+        // Actions
+        //=======================================================================//
+
+        public Action? OnRegisterSuccess { get; set; }
+
+
+        //=======================================================================//
+
         [RelayCommand]
         private async Task LoginAsync()
         {
-            //@TODO REST API 호출
-            // var result = await ApiClient.LoginAsync(UserId, Password);
-
             if (string.IsNullOrEmpty(UserId) || string.IsNullOrEmpty(Password))
             {
                 ErrorMessage = "아이디와 비밀번호를 입력해주세요.";
                 return;
             }
+            
+            var result = await ApiClient.LoginAsync(UserId, Password);
 
-            // 성공 시 메인윈도우 전환
-            var mainWindow = new MainWindow();
-            mainWindow.Show();
-            Application.Current.Windows[0]?.Close();
-
-            Debug.WriteLine("userId : " + UserId + "password : " +  Password);
+            if(result?.StatusCode == 200)
+            {
+                // 성공 시 메인윈도우 전환
+                var mainWindow = new MainWindow();
+                mainWindow.Show();
+                Application.Current.Windows[0]?.Close();
+            }
+            else
+            {
+                ErrorMessage = result?.Message ?? "로그인 실패";
+            }
         }
 
         [RelayCommand]
         private async Task RegisterAsync()
         {
-            //@TODO REST API 회원가입 호출
 
             if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(UserId) || string.IsNullOrEmpty(RegisterPassword))
             {
@@ -57,7 +70,18 @@ namespace isegoria_wpf.ViewModels
                 return;
             }
 
-            Debug.WriteLine("userName : " + UserName + "userId : " + UserId + "registerpassword : " + RegisterPassword);
+            var result = await ApiClient.RegisterAsync(UserId, UserName, RegisterPassword);
+
+            if (result?.StatusCode == 200)
+            {
+                // 성공시 로그인뷰 전환
+                MessageBox.Show("성공");
+                OnRegisterSuccess?.Invoke();
+            }
+            else
+            {
+                ErrorMessage = result?.Message ?? "회원가입 실패";
+            }
         }
 
         [RelayCommand]
@@ -82,6 +106,6 @@ namespace isegoria_wpf.ViewModels
 
             Debug.WriteLine("UpdateUserInfo 호출됨");
         }
-            
+
     }
 }

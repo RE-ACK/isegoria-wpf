@@ -1,4 +1,5 @@
-﻿using System;
+﻿using isegoria_wpf.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -26,9 +27,33 @@ namespace isegoria_wpf.Views.Modals
                 if (e.ButtonState == MouseButtonState.Pressed)
                     this.DragMove();
             };
+
+            LoadUserInfo();
         }
 
         private bool _isEditing = false;
+
+
+        private void LoadUserInfo()
+        {
+            var user = User.CurrentUser;
+            if (user == null) return;
+
+            UsernameInput.Text = user.Username;
+            UsernameText.Text = user.Username;
+
+            UserTagText.Text = $"#{user.Id:D4}";
+
+            if (!string.IsNullOrEmpty(user.AvatarUrl))
+            {
+                var btn = ProfileImageButton;
+                btn.ApplyTemplate();
+                if (btn.Template.FindName("ProfileImageBrush", btn) is ImageBrush brush)
+                    brush.ImageSource = new BitmapImage(new Uri(user.AvatarUrl));
+            }
+        }
+
+        //====================================================================================//
 
         private void SettingButton_Click(object sender, RoutedEventArgs e)
         {
