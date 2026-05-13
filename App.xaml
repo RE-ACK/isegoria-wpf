@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:isegoria_wpf">
     <Application.Resources>
         <ResourceDictionary>
+                  
             <FontFamily x:Key="IrishGrover">pack://application:,,,/Assets/Fonts/#Irish Grover</FontFamily>
             <FontFamily x:Key="Pretendard">pack://application:,,,/Assets/Fonts/#Pretendard Variable Thin</FontFamily>
             

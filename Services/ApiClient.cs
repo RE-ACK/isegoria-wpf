@@ -12,7 +12,7 @@ namespace isegoria_wpf.Services
 {
     public class ApiClient
     {
-        private static readonly HttpClient _client;
+        internal static readonly HttpClient _client;
 
         static ApiClient()
         {
@@ -97,5 +97,6 @@ namespace isegoria_wpf.Services
                 return null;
             }
         }
+
     }
 }

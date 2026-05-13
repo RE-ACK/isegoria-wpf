@@ -37,11 +37,27 @@
                            Margin="0,0,0,24" />
 
                 <!-- 서버 아이콘 -->
-                <Image Source="/Assets/img_add_icon.png"
-                       Width="80"
-                       Height="80"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,24" />
+                <Border Width="80" Height="80"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,24"
+                    CornerRadius="40"
+                    Cursor="Hand">              
+                    <Border.InputBindings>
+                        <MouseBinding MouseAction="LeftClick"
+                      Command="{Binding SelectImageCommand}"/>
+                    </Border.InputBindings>
+
+                    <Grid>
+                        <!-- 기본 아이콘 -->
+                        <Image Source="/Assets/img_add_icon.png"
+                             Visibility="{Binding DefaultIconVisibility}"/>
+
+                        <!-- 선택된 이미지 미리보기 -->
+                        <Image Source="{Binding SelectedImagePath}"
+                             Stretch="UniformToFill"
+                             Visibility="{Binding PreviewVisibility}"/>
+                    </Grid>
+                </Border>
 
                 <!-- 서버 이름 -->
                 <TextBlock Text="서버 이름"
