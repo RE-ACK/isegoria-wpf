@@ -24,6 +24,7 @@ namespace isegoria_wpf.Views.Modals
                 vm.OnJoinSuccess = () =>
                 {
                     this.DialogResult = true;
+
                     this.Close();
                 };
             }

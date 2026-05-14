@@ -41,8 +41,19 @@ namespace isegoria_wpf.ViewModels
         [ObservableProperty]
         private ServerInfo? _selectedServer;
 
+        [ObservableProperty]
+        private bool _isUploading = false;
+        public bool CanCreate => !IsUploading;
+        public string CreateButtonText => IsUploading ? "업로드 중..." : "생성";
+
         public Action? OnCreateSuccess { get; set; }
         public Action? OnJoinSuccess { get; set; }
+
+        partial void OnIsUploadingChanged(bool value)
+        {
+            OnPropertyChanged(nameof(CanCreate));
+            OnPropertyChanged(nameof(CreateButtonText));
+        }
 
         [RelayCommand]
         private async Task SelectImageAsync()
@@ -58,21 +69,15 @@ namespace isegoria_wpf.ViewModels
             PreviewVisibility = Visibility.Visible;
             DefaultIconVisibility = Visibility.Collapsed;
 
-            // 선택하자마자 바로 업로드
-            Debug.WriteLine($"업로드 시도: {SelectedImagePath}");
-
+            // 업로드 시작 → 버튼 막기
+            IsUploading = true;
             var urls = await ApiServer.UploadImagesAsync(SelectedImagePath);
-
-            UploadedImageUrl = urls?.FirstOrDefault(); 
-
-            Debug.WriteLine($"urls 자체: {urls}");
-            Debug.WriteLine($"urls 개수: {urls?.Count}");
-            Debug.WriteLine($"첫번째 URL: {urls?.FirstOrDefault()}");
+            UploadedImageUrl = urls?.FirstOrDefault();
+            IsUploading = false;  // 업로드 완료 → 버튼 열기
 
             if (UploadedImageUrl == null)
             {
                 ErrorMessage = "이미지 업로드에 실패했습니다.";
-                // 실패하면 다시 기본 아이콘으로
                 SelectedImagePath = string.Empty;
                 PreviewVisibility = Visibility.Collapsed;
                 DefaultIconVisibility = Visibility.Visible;
@@ -89,10 +94,9 @@ namespace isegoria_wpf.ViewModels
                 return;
             }
 
-            //@TODO REST API 서버 생성 호출
             ErrorMessage = string.Empty;
 
-            // 이미 업로드된 URL 사용
+            // iconUrl 없으면 null로 그냥 생성
             var server = await ApiServer.CreateServerAsync(ServerName, UploadedImageUrl);
 
             if (server != null)
@@ -110,7 +114,6 @@ namespace isegoria_wpf.ViewModels
             {
                 ErrorMessage = "서버 생성에 실패했습니다.";
             }
-
         }
 
         [RelayCommand]
@@ -124,7 +127,23 @@ namespace isegoria_wpf.ViewModels
 
             //@TODO REST API 서버 참여 호출 
 
-            OnJoinSuccess?.Invoke();
+            ErrorMessage = string.Empty;
+
+            var (server, message) = await ApiServer.JoinServerAsync(ServerCode);
+
+            if (server != null)
+            {
+                ServerList.Add(server);
+                SelectedServer = server;
+                ServerCode = string.Empty;
+                OnJoinSuccess?.Invoke();
+            }
+            else
+            {
+                ErrorMessage = message ?? "서버 입장에 실패했습니다.";
+            }
+
+
 
         }
     }

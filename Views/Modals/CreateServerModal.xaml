@@ -52,10 +52,14 @@
                         <Image Source="/Assets/img_add_icon.png"
                              Visibility="{Binding DefaultIconVisibility}"/>
 
-                        <!-- 선택된 이미지 미리보기 -->
-                        <Image Source="{Binding SelectedImagePath}"
-                             Stretch="UniformToFill"
-                             Visibility="{Binding PreviewVisibility}"/>
+                        <Image Stretch="UniformToFill"
+                            Visibility="{Binding PreviewVisibility}">
+                            <Image.Source>
+                                <Binding Path="SelectedImagePath"
+                                    TargetNullValue="/Assets/img_add_icon.png"
+                                    FallbackValue="/Assets/img_add_icon.png"/>
+                            </Image.Source>
+                        </Image>
                     </Grid>
                 </Border>
 
@@ -127,10 +131,12 @@
                     </Button>
 
                     <Button Grid.Column="2"
-                            Content="생성"
+                            Content="{Binding CreateButtonText}"
+                            IsEnabled="{Binding CanCreate}"
                             Height="44"
                             Cursor="Hand"
                             Command="{Binding CreateServerCommand}"
+                           
                             Style="{StaticResource LoginButtonStyle}" />
                 </Grid>
             </StackPanel>

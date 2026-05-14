@@ -43,16 +43,15 @@ namespace isegoria_wpf.Services
                 var request = new CreateServerRequest(name, iconUrl);
                 var response = await ApiClient._client.PostAsJsonAsync("api/servers", request);
 
-                Debug.WriteLine($"Authorization 헤더: {ApiClient._client.DefaultRequestHeaders.Authorization}");
-
-                // 원문 확인
                 var raw = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine($"상태코드: {response.StatusCode}");
                 Debug.WriteLine($"응답 원문: {raw}");
 
+                var result = System.Text.Json.JsonSerializer.Deserialize<ServerResponse>(raw);
 
-                var result = await response.Content
-                    .ReadFromJsonAsync<ServerResponse>();
+                Debug.WriteLine($"=== 서버 생성 결과 ===");
+                Debug.WriteLine($"server.Name: {result?.Body?.Name ?? "null"}");
+                Debug.WriteLine($"server.IconUrl: {result?.Body?.IconUrl ?? "null"}");
 
                 return result?.Body;
             }
@@ -65,21 +64,24 @@ namespace isegoria_wpf.Services
 
         // [POST] 초대 코드로 서버 입장
         // POST /api/servers/join
-        public static async Task<ServerInfo?> JoinServerAsync(string inviteCode)
+        public static async Task<(ServerInfo? Server, string? Message)> JoinServerAsync(string inviteCode)
         {
             try
             {
                 var request = new JoinServerRequest(inviteCode);
                 var response = await ApiClient._client.PostAsJsonAsync("api/servers/join", request);
-                var result = await response.Content
-                    .ReadFromJsonAsync<ServerResponse>();
 
-                return result?.Body;
+                var raw = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"JoinServer 응답: {raw}");
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<ServerResponse>(raw);
+
+                return (result?.Body, result?.Message);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"JoinServerAsync error: {ex.Message}");
-                return null;
+                return (null, null);
             }
         }
 
@@ -179,12 +181,24 @@ namespace isegoria_wpf.Services
                 using var fileStream = System.IO.File.OpenRead(filePath);
                 form.Add(new StreamContent(fileStream), "files", Path.GetFileName(filePath));
 
+                Debug.WriteLine($"=== 이미지 업로드 시작 ===");
+                Debug.WriteLine($"파일 경로: {filePath}");
+                Debug.WriteLine($"파일명: {Path.GetFileName(filePath)}");
                 Debug.WriteLine($"요청 URL: {ApiClient._client.BaseAddress}api/images/upload");
+
                 var response = await ApiClient._client.PostAsync("api/images/upload", form);
 
+                Debug.WriteLine($"상태코드: {response.StatusCode}");
 
-                var result = await response.Content
-                    .ReadFromJsonAsync<List<string>>();
+                var raw = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"응답 원문: {raw}");
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<List<string>>(raw);
+
+                Debug.WriteLine($"파싱된 URL 개수: {result?.Count ?? 0}");
+                if (result != null)
+                    foreach (var url in result)
+                        Debug.WriteLine($"URL: {url}");
 
                 return result;
             }

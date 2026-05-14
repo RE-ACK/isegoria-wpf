@@ -44,13 +44,26 @@ namespace isegoria_wpf.ViewModels
                 ErrorMessage = "아이디와 비밀번호를 입력해주세요.";
                 return;
             }
-            
+
+            var mainWindow = new MainWindow();
+
             var result = await ApiClient.LoginAsync(UserId, Password);
 
             if(result?.StatusCode == 200)
             {
                 // 성공 시 메인윈도우 전환
-                var mainWindow = new MainWindow();
+               
+                var servers = await ApiServer.GetMyServersAsync();
+                if (servers != null)
+                {
+                    foreach (var server in servers)
+                    {
+                        Debug.WriteLine($"서버: {server.Name}, iconUrl: {server.IconUrl ?? "null"}");
+                        mainWindow.AddServerToList(server.IconUrl, server.Name);
+                    
+                    }
+                }
+
                 mainWindow.Show();
                 Application.Current.Windows[0]?.Close();
             }

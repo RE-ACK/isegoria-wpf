@@ -18,9 +18,11 @@ namespace isegoria_wpf.Views
     /// </summary>
     public partial class ChannelView : UserControl
     {
-        public ChannelView()
+        public ChannelView(string? servername =null)
         {
             InitializeComponent();
+            ServerNameText?.Text = servername;
+
             MessageInput.KeyDown += MessageInput_KeyDown;
         }
 

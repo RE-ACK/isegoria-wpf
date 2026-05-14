@@ -1,4 +1,5 @@
 ﻿using isegoria_wpf.Views.Modals;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,13 +27,13 @@ namespace isegoria_wpf
         }
 
 
-        public void UpdateMainContent()
+        public void UpdateMainContent(string? serverName = null)
         {
             bool hasServer = ServerList.Children.Count > 1;
 
             if (hasServer)
             {
-                MainContent.Content = new Views.ChannelView();
+                MainContent.Content = new Views.ChannelView(serverName ?? string.Empty);
             }
             else
             {
@@ -55,6 +56,33 @@ namespace isegoria_wpf
         private void AddServerButton_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = new Views.WelcomeView();
+        }
+
+        public void AddServerToList(string? iconUrl = null, string? serverName = null)
+        {
+            Debug.WriteLine($"=== AddServerToList 호출 ===");
+            Debug.WriteLine($"serverName: {serverName}");
+            Debug.WriteLine($"iconUrl: {iconUrl ?? "null"}");
+
+
+
+            var serverButton = new Views.Buttons.ServerButton
+            {
+                IconUrl = iconUrl ?? "/Assets/default_profile.png",
+                ServerName = serverName ?? string.Empty
+            };
+
+
+            Debug.WriteLine($"ServerButton.IconUrl 설정값: {serverButton.IconUrl}");
+            serverButton.ServerClicked += (s, e) =>
+            {
+                MainContent.Content = new Views.ChannelView(serverName ?? string.Empty);
+            };
+
+            int addButtonIndex = ServerList.Children.IndexOf(AddServerButton);
+            ServerList.Children.Insert(addButtonIndex, serverButton);
+
+            UpdateMainContent(serverName ?? string.Empty);
         }
 
         private void TopBar_MouseDown(object sender, MouseButtonEventArgs e)

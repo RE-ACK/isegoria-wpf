@@ -1,4 +1,6 @@
-﻿using isegoria_wpf.Views.Modals;
+﻿using isegoria_wpf.ViewModels;
+using isegoria_wpf.Views.Buttons;
+using isegoria_wpf.Views.Modals;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -31,29 +33,8 @@ namespace isegoria_wpf.Views
                 var mainWindow = Window.GetWindow(this) as MainWindow;
                 if (mainWindow != null)
                 {
-                    var serverButton = new Button
-                    {
-                        Style = (Style)FindResource("ServerButtonStyle"),
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Margin = new Thickness(0, 0, 0, 8)
-                    };
-
-                    serverButton.Click += (s, e) =>
-                    {
-                        mainWindow.MainContent.Content = new Views.ChannelView();
-                    };
-
-                    serverButton.Content = new Image
-                    {
-                        Source = new BitmapImage(new Uri("/Assets/default_profile.png", UriKind.Relative)),
-                        Width = 35,
-                        Height = 35
-                    };
-
-                    int addButtonIndex = mainWindow.ServerList.Children.IndexOf(mainWindow.AddServerButton);
-                    mainWindow.ServerList.Children.Insert(addButtonIndex, serverButton);
-
-                    mainWindow.UpdateMainContent();
+                    var vm = modal.DataContext as ServerViewModel;
+                    AddServerButton(vm?.SelectedServer?.IconUrl,vm?.SelectedServer?.Name);
                 }
             }
         }
@@ -63,7 +44,21 @@ namespace isegoria_wpf.Views
             var modal = new JoinServerModal();
             modal.Owner = Window.GetWindow(this);
 
-            modal.ShowDialog();
+            if (modal.ShowDialog() == true)
+            {
+                var mainWindow = Window.GetWindow(this) as MainWindow;
+                if (mainWindow != null)
+                {
+                    var vm = modal.DataContext as ServerViewModel;
+                    AddServerButton(vm?.SelectedServer?.IconUrl);
+                }
+            }
+        }
+
+        private void AddServerButton(string? iconUrl = null,string? serverName=null)
+        {
+            var mainWindow = Window.GetWindow(this) as MainWindow;
+            mainWindow.AddServerToList(iconUrl, serverName);
         }
 
     }
