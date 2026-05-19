@@ -69,11 +69,11 @@ namespace isegoria_wpf.ViewModels
             PreviewVisibility = Visibility.Visible;
             DefaultIconVisibility = Visibility.Collapsed;
 
-            // 업로드 시작 → 버튼 막기
+
             IsUploading = true;
             var urls = await ApiServer.UploadImagesAsync(SelectedImagePath);
             UploadedImageUrl = urls?.FirstOrDefault();
-            IsUploading = false;  // 업로드 완료 → 버튼 열기
+            IsUploading = false; 
 
             if (UploadedImageUrl == null)
             {

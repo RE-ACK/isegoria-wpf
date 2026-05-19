@@ -49,7 +49,6 @@ namespace isegoria_wpf.Services
                 var response = await _client.PostAsJsonAsync("api/auth/register", request);
                 var result = await response.Content.ReadFromJsonAsync<RegisterResponse>();
 
-
                 return result;
             }
             catch (Exception ex)
@@ -110,8 +109,6 @@ namespace isegoria_wpf.Services
                 var response = await _client.PutAsJsonAsync("api/user/update", request);
 
                 var raw = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"상태코드: {response.StatusCode}");
-                Debug.WriteLine($"UpdateUser 응답: {raw}");
 
                 var result = System.Text.Json.JsonSerializer.Deserialize<UpdateUserResponse>(raw);
                 return result;

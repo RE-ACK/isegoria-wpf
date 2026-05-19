@@ -77,7 +77,7 @@ namespace isegoria_wpf.ViewModels
                 {
                     foreach (var server in servers)
                     {
-                        //Debug.WriteLine($"서버: {server.Name}, iconUrl: {server.IconUrl ?? "null"}");
+                        // 서버 리스트에 추가
                         mainWindow.AddServerToList(server.IconUrl, server.Name,server.Id);
                     
                     }
@@ -134,11 +134,8 @@ namespace isegoria_wpf.ViewModels
         [RelayCommand]
         private async Task UpdateUserInfoAsync()
         {
-            // 이미 업로드된 URL 사용
+            // 유저 정보 업데이트 (닉네임, 아바타)
             var result = await ApiClient.UpdateUserAsync(UserName, UploadedAvatarUrl);
-
-            //server error
-
 
             if (result?.StatusCode == 200)
             {

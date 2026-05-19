@@ -1,4 +1,5 @@
-﻿using isegoria_wpf.Services;
+﻿using isegoria_wpf.Models;
+using isegoria_wpf.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,6 +25,9 @@ namespace isegoria_wpf.Views
             InitializeComponent();
             ServerNameText?.Text = servername;
             _serverId = serverId;
+
+            UsernameText.Text = User.CurrentUser?.Username ?? "사용자명";
+            UserTagText.Text = $"#{User.CurrentUser?.Id:D4}";
 
             this.Loaded += async (s, e) => await LoadMembersAsync();
 
@@ -167,7 +171,9 @@ namespace isegoria_wpf.Views
             VoiceStatusBar.Visibility = Visibility.Collapsed;
         }
 
-        private async Task LoadMembersAsync()
+        //임시로 오프라인에 유저목록 몰아넣음
+
+        public async Task LoadMembersAsync()
         {
             var members = await ApiServer.GetServerMembersAsync(_serverId);
             if (members == null) return;

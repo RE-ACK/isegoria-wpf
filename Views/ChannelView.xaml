@@ -248,11 +248,13 @@
                         <!-- 사용자명 -->
                         <StackPanel Grid.Column="0"
                                     VerticalAlignment="Center">
-                            <TextBlock Text="사용자명"
+                            <TextBlock x:Name="UsernameText"
+                                       Text="사용자명"
                                        Foreground="White"
                                        FontSize="13"
                                        FontWeight="SemiBold" />
-                            <TextBlock Text="#0001"
+                            <TextBlock x:Name="UserTagText"
+                                       Text="#0001"
                                        Foreground="{StaticResource BorderColor}"
                                        FontSize="11" />
                         </StackPanel>

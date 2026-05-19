@@ -117,8 +117,18 @@ namespace isegoria_wpf.Views.Modals
 
                 var mainWindow = Owner as MainWindow;
                 if (mainWindow != null)
+                {
                     mainWindow.UserProfileButton.AvatarUrl = User.CurrentUser?.AvatarUrl;
 
+                    if (mainWindow.MainContent.Content is ChannelView channelView)
+                    {
+                        channelView.UsernameText.Text = User.CurrentUser?.Username ?? "사용자명";
+                        channelView.UserTagText.Text = $"#{User.CurrentUser?.Id:D4}";
+
+                        await channelView.LoadMembersAsync();
+                    }
+                }
+                   
                 this.Close();
             }
             catch (Exception ex)
