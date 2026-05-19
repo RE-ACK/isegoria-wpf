@@ -470,7 +470,7 @@
 
                     <!-- 온라인 -->
                     <TextBlock x:Name="OnlineCountText"
-                       Text="온라인 - 0"
+                       Text="온라인"
                        Foreground="{StaticResource BorderColor}"
                        FontSize="11" FontWeight="SemiBold"
                        Margin="8,0,0,8"/>
@@ -479,7 +479,7 @@
      
                     <!-- 오프라인 -->
                     <TextBlock x:Name="OfflineCountText"
-                               Text="오프라인 - 0"
+                               Text="오프라인"
                                Foreground="{StaticResource BorderColor}"
                                FontSize="11"
                                FontWeight="SemiBold"
