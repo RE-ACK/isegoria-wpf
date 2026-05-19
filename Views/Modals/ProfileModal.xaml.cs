@@ -111,12 +111,10 @@ namespace isegoria_wpf.Views.Modals
             this.IsEnabled = false;
             try
             {
-                // ViewModel 에 현재 입력값 전달
                 vm.UserName = UsernameInput.Text;
 
                 await vm.UpdateUserInfoCommand.ExecuteAsync(null);
 
-                // MainWindow 프로필 버튼 업데이트
                 var mainWindow = Owner as MainWindow;
                 if (mainWindow != null)
                     mainWindow.UserProfileButton.AvatarUrl = User.CurrentUser?.AvatarUrl;
