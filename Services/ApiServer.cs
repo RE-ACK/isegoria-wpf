@@ -15,16 +15,6 @@ namespace isegoria_wpf.Services
     {
 
 
-        static ApiServer()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-
-            string baseUrl = config["Api:BaseUrl"]!;
-            Debug.WriteLine("SERVER URL : " + baseUrl);
-
-        }
 
         public static void SetAuthHeader(string accessToken)
         {

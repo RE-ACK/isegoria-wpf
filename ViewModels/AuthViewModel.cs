@@ -69,7 +69,9 @@ namespace isegoria_wpf.ViewModels
             if(result?.StatusCode == 200)
             {
                 // 성공 시 메인윈도우 전환
-               
+
+                mainWindow.UserProfileButton.AvatarUrl = User.CurrentUser?.AvatarUrl;
+
                 var servers = await ApiServer.GetMyServersAsync();
                 if (servers != null)
                 {

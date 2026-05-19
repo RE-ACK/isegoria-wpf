@@ -16,7 +16,10 @@
                 <Ellipse Width="{Binding Width, ElementName=Root}"
                          Height="{Binding Height, ElementName=Root}">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding AvatarUrl, ElementName=Root}"/>
+                        <ImageBrush ImageSource="{Binding AvatarUrl, ElementName=Root,
+                            FallbackValue=/Assets/default_profile.png,
+                             TargetNullValue=/Assets/default_profile.png}"/>
+
                     </Ellipse.Fill>
                 </Ellipse>
             </ControlTemplate>
