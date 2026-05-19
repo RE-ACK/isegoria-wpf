@@ -60,14 +60,6 @@ namespace isegoria_wpf.Models.Dtos
             [property: JsonPropertyName("body")] InviteCodeInfo? Body
         );
 
-        // 파일 업로드 응답
-        // POST /api/file/upload
-        public record FileUploadResponse(
-            [property: JsonPropertyName("statusCode")] int StatusCode,
-            [property: JsonPropertyName("message")] string Message,
-            [property: JsonPropertyName("body")] string? Url
-        );
-
         // 서버 멤버 정보
         public record MemberInfo(
             [property: JsonPropertyName("userId")] long UserId,
