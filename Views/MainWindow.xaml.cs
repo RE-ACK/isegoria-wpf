@@ -24,6 +24,8 @@ namespace isegoria_wpf
             InitializeComponent();
             UpdateMainContent();
             //MainContent.Content = new ChatArea();
+
+            UserProfileButton.ProfileClicked += OnProfileClicked;
         }
 
 
@@ -46,7 +48,7 @@ namespace isegoria_wpf
         // Callback
         // ============================================================================== //
 
-        private void UserIconButton_Click(object sender, RoutedEventArgs e)
+        private void OnProfileClicked(object sender, RoutedEventArgs e)
         {
             var modal = new ProfileModal();
             modal.Owner = Window.GetWindow(this);

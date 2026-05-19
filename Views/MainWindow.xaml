@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:isegoria_wpf"
+        xmlns:buttons="clr-namespace:isegoria_wpf.Views.Buttons"
+       
         mc:Ignorable="d"
         Title="MainWindow"
         Height="700"
@@ -54,24 +55,12 @@
                         </StackPanel>
                     </ScrollViewer>
 
-                    <Button Grid.Row="1"
-                            Width="65"
-                            Height="65"
-                            HorizontalAlignment="Center"
-                            Cursor="Hand"
-                            Margin="0,8,0,0"
-                            Click="UserIconButton_Click">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Ellipse Width="65"
-                                         Height="65">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="/Assets/default_profile.png" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    <buttons:ProfileButton x:Name="UserProfileButton"
+                       Grid.Row="1"
+                       Width="65"
+                       Height="65"
+                       HorizontalAlignment="Center"
+                       Margin="0,8,0,0"/>
                 </Grid>
             </Border>
 

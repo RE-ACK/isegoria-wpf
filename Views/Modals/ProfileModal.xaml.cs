@@ -1,6 +1,9 @@
 ﻿using isegoria_wpf.Models;
+using isegoria_wpf.Services;
+using isegoria_wpf.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -65,7 +68,9 @@ namespace isegoria_wpf.Views.Modals
                 UsernameInput.Focus();
         }
 
-        private void ProfileImage_Click(object sender, RoutedEventArgs e)
+        private string? _selectedImagePath = null;
+        
+        private async void ProfileImage_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog
             {
@@ -76,11 +81,55 @@ namespace isegoria_wpf.Views.Modals
 
             if (dialog.ShowDialog() == true)
             {
+                _selectedImagePath = dialog.FileName;
+
                 var image = new BitmapImage(new Uri(dialog.FileName));
                 var btn = sender as Button;
                 btn?.ApplyTemplate();
                 if (btn?.Template.FindName("ProfileImageBrush", btn) is ImageBrush brush)
                     brush.ImageSource = image;
+
+                if (DataContext is not AuthViewModel vm) return;
+                
+                vm.SelectedImagePath = dialog.FileName;
+
+                vm.IsUploading = true;
+
+                var urls = await ApiServer.UploadImagesAsync(_selectedImagePath);
+                vm.UploadedAvatarUrl = urls?.FirstOrDefault();
+
+                vm.IsUploading = false;  
+
+            }
+
+        }
+
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!(DataContext is ViewModels.AuthViewModel vm)) return;
+
+            this.IsEnabled = false;
+            try
+            {
+                // ViewModel 에 현재 입력값 전달
+                vm.UserName = UsernameInput.Text;
+
+                await vm.UpdateUserInfoCommand.ExecuteAsync(null);
+
+                // MainWindow 프로필 버튼 업데이트
+                var mainWindow = Owner as MainWindow;
+                if (mainWindow != null)
+                    mainWindow.UserProfileButton.AvatarUrl = User.CurrentUser?.AvatarUrl;
+
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                vm.ErrorMessage = ex.Message;
+            }
+            finally
+            {
+                this.IsEnabled = true;
             }
         }
 

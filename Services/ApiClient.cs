@@ -98,5 +98,29 @@ namespace isegoria_wpf.Services
             }
         }
 
+        /*
+         [PUT] 유저 정보 업데이트
+         */
+
+        public static async Task<UpdateUserResponse?> UpdateUserAsync(string username, string? avatarUrl)
+        {
+            try
+            {
+                var request = new UpdateUserRequest(username, avatarUrl);
+                var response = await _client.PutAsJsonAsync("api/user/update", request);
+
+                var raw = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"상태코드: {response.StatusCode}");
+                Debug.WriteLine($"UpdateUser 응답: {raw}");
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<UpdateUserResponse>(raw);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"UpdateUserAsync error: {ex.Message}");
+                return null;
+            }
+        }
     }
 }

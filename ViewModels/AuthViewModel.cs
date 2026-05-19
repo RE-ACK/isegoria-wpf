@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using isegoria_wpf.Models;
 using isegoria_wpf.Services;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,22 @@ namespace isegoria_wpf.ViewModels
 
         [ObservableProperty]
         private string _errorMessage = string.Empty;
+
+        [ObservableProperty]
+        private string _selectedImagePath = string.Empty;
+
+        [ObservableProperty]
+        private string? _uploadedAvatarUrl = null;
+
+        [ObservableProperty]
+        private bool _isUploading = false;
+
+        public bool CanSave => !IsUploading;
+
+        partial void OnIsUploadingChanged(bool value)
+        {
+            OnPropertyChanged(nameof(CanSave));
+        }
 
         // PasswordBox는 바인딩 안되서 따로 처리
         public string Password { get; set; } = string.Empty;
@@ -115,10 +132,27 @@ namespace isegoria_wpf.ViewModels
         [RelayCommand]
         private async Task UpdateUserInfoAsync()
         {
-            //@TODO REST API 유저 정보 업데이트
+            // 이미 업로드된 URL 사용
+            var result = await ApiClient.UpdateUserAsync(UserName, UploadedAvatarUrl);
 
-            Debug.WriteLine("UpdateUserInfo 호출됨");
+            //server error
+
+
+            if (result?.StatusCode == 200)
+            {
+                if (User.CurrentUser != null)
+                {
+                    User.CurrentUser.Username = result.Body?.Username ?? UserName;
+      
+                    User.CurrentUser.AvatarUrl = result.Body?.AvatarUrl ?? UploadedAvatarUrl;
+                }
+            }
+            else
+            {
+                ErrorMessage = result?.Message ?? "업데이트 실패";
+            }
         }
-
     }
+
+  
 }

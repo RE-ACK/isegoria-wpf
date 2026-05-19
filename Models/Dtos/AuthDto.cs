@@ -52,5 +52,16 @@ namespace isegoria_wpf.Models.Dtos
             [property: JsonPropertyName("refreshToken")] string RefreshToken
         );
 
+        public record UpdateUserRequest(
+            [property: JsonPropertyName("username")] string Username,
+            [property: JsonPropertyName("avatarUrl")] string? AvatarUrl
+        );
+
+        public record UpdateUserResponse(
+            [property: JsonPropertyName("statusCode")] int StatusCode,
+            [property: JsonPropertyName("message")] string Message,
+            [property: JsonPropertyName("body")] UserInfo? Body
+        );
+
     }
 }

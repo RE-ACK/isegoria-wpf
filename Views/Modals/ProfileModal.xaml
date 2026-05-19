@@ -179,7 +179,8 @@
                             Content="확인"
                             Height="44"
                             Cursor="Hand"
-                            Command="{Binding UpdateUserInfoCommand}"
+                            Click="SaveButton_Click"
+                             IsEnabled="{Binding CanSave}"
                             Style="{StaticResource LoginButtonStyle}" />
                 </Grid>
             </StackPanel>

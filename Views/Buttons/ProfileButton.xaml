@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="isegoria_wpf.Views.Buttons.ProfileButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:isegoria_wpf.Views.Buttons"
+             mc:Ignorable="d" 
+            x:Name="Root">
+    <Button Cursor="Hand"
+            Width="{Binding Width, ElementName=Root}"
+            Height="{Binding Height, ElementName=Root}"
+            Click="ProfileButton_Click"
+            >
+        <Button.Template>
+            <ControlTemplate TargetType="Button">
+                <Ellipse Width="{Binding Width, ElementName=Root}"
+                         Height="{Binding Height, ElementName=Root}">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding AvatarUrl, ElementName=Root}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+            </ControlTemplate>
+        </Button.Template>
+    </Button>
+</UserControl>
