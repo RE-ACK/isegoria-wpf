@@ -58,31 +58,23 @@ namespace isegoria_wpf
             MainContent.Content = new Views.WelcomeView();
         }
 
-        public void AddServerToList(string? iconUrl = null, string? serverName = null)
+        public void AddServerToList(string? iconUrl = null, string? serverName = null, long serverId = 0)
         {
-            Debug.WriteLine($"=== AddServerToList 호출 ===");
-            Debug.WriteLine($"serverName: {serverName}");
-            Debug.WriteLine($"iconUrl: {iconUrl ?? "null"}");
-
-
-
             var serverButton = new Views.Buttons.ServerButton
             {
                 IconUrl = iconUrl ?? "/Assets/default_profile.png",
                 ServerName = serverName ?? string.Empty
             };
 
-
-            Debug.WriteLine($"ServerButton.IconUrl 설정값: {serverButton.IconUrl}");
             serverButton.ServerClicked += (s, e) =>
             {
-                MainContent.Content = new Views.ChannelView(serverName ?? string.Empty);
+                MainContent.Content = new Views.ChannelView(serverName ?? string.Empty, serverId);
             };
 
             int addButtonIndex = ServerList.Children.IndexOf(AddServerButton);
             ServerList.Children.Insert(addButtonIndex, serverButton);
 
-            UpdateMainContent(serverName ?? string.Empty);
+            MainContent.Content = new Views.ChannelView(serverName ?? string.Empty, serverId);
         }
 
         private void TopBar_MouseDown(object sender, MouseButtonEventArgs e)

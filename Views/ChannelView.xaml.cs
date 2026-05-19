@@ -1,4 +1,5 @@
-﻿using System;
+﻿using isegoria_wpf.Services;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -18,10 +19,13 @@ namespace isegoria_wpf.Views
     /// </summary>
     public partial class ChannelView : UserControl
     {
-        public ChannelView(string? servername =null)
+        public ChannelView(string? servername = null, long serverId = 0)
         {
             InitializeComponent();
             ServerNameText?.Text = servername;
+            _serverId = serverId;
+
+            this.Loaded += async (s, e) => await LoadMembersAsync();
 
             MessageInput.KeyDown += MessageInput_KeyDown;
         }
@@ -29,13 +33,15 @@ namespace isegoria_wpf.Views
         private bool _isVoiceMuted = false;
         private bool _isMicMuted = false;
 
-        private void Add_File_Click(object sender, RoutedEventArgs e) 
-        { 
+        private long _serverId;
+
+        private void Add_File_Click(object sender, RoutedEventArgs e)
+        {
             //@TODO 파일 첨부 로직
         }
 
         private void Send_Click(object sender, RoutedEventArgs e) => SendMessage();
-        
+
         private void MessageInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -160,6 +166,42 @@ namespace isegoria_wpf.Views
             VoiceParticipants.Visibility = Visibility.Collapsed;
             VoiceStatusBar.Visibility = Visibility.Collapsed;
         }
-    }
 
+        private async Task LoadMembersAsync()
+        {
+            var members = await ApiServer.GetServerMembersAsync(_serverId);
+            if (members == null) return;
+
+            OnlineMemberList.Children.Clear();
+            OfflineMemberList.Children.Clear();
+
+            var onlineList = members.Where(m => m.IsOnline).ToList();
+            var offlineList = members.Where(m => !m.IsOnline).ToList();
+
+            OnlineCountText.Text = $"온라인 - {onlineList.Count}";
+            OfflineCountText.Text = $"오프라인 - {offlineList.Count}";
+
+            foreach (var member in onlineList)
+            {
+                var btn = new Views.Buttons.MemberButton
+                {
+                    Username = member.Username ?? $"유저 {member.UserId}",
+                    AvatarUrl = member.AvatarUrl?? "pack://application:,,,/Assets/default_profile.png",
+                    IsOnline = true
+                };
+                OnlineMemberList.Children.Add(btn);
+            }
+
+            foreach (var member in offlineList)
+            {
+                var btn = new Views.Buttons.MemberButton
+                {
+                    Username = member.Username ?? $"유저 {member.UserId}",
+                    AvatarUrl = member.AvatarUrl ?? "pack://application:,,,/Assets/default_profile.png",
+                    IsOnline = false
+                };
+                OfflineMemberList.Children.Add(btn);
+            }
+        }
+    }
 }

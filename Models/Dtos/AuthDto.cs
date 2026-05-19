@@ -40,7 +40,7 @@ namespace isegoria_wpf.Models.Dtos
         );
 
         public record UserInfo(
-            [property: JsonPropertyName("id")] int Id,
+            [property: JsonPropertyName("id")] long Id,
             [property: JsonPropertyName("username")] string Username,
             [property: JsonPropertyName("email")] string Email,
             [property: JsonPropertyName("avatarUrl")] string? AvatarUrl,

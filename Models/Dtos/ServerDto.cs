@@ -67,5 +67,22 @@ namespace isegoria_wpf.Models.Dtos
             [property: JsonPropertyName("message")] string Message,
             [property: JsonPropertyName("body")] string? Url
         );
+
+        // 서버 멤버 정보
+        public record MemberInfo(
+            [property: JsonPropertyName("userId")] long UserId,
+            [property: JsonPropertyName("username")] string? Username,
+            [property: JsonPropertyName("avatarUrl")] string? AvatarUrl,
+            [property: JsonPropertyName("role")] string Role,
+            [property: JsonPropertyName("joinedAt")] string JoinedAt,
+            bool IsOnline = false
+        );
+
+        // 멤버 목록 응답
+        public record MemberListResponse(
+            [property: JsonPropertyName("statusCode")] int StatusCode,
+            [property: JsonPropertyName("message")] string Message,
+            [property: JsonPropertyName("body")] List<MemberInfo>? Body
+        );
     }
 }

@@ -34,7 +34,7 @@ namespace isegoria_wpf.Views
                 if (mainWindow != null)
                 {
                     var vm = modal.DataContext as ServerViewModel;
-                    AddServerButton(vm?.SelectedServer?.IconUrl,vm?.SelectedServer?.Name);
+                    AddServerButton(vm?.SelectedServer?.IconUrl,vm?.SelectedServer?.Name, vm?.SelectedServer?.Id ?? 0);
                 }
             }
         }
@@ -50,15 +50,19 @@ namespace isegoria_wpf.Views
                 if (mainWindow != null)
                 {
                     var vm = modal.DataContext as ServerViewModel;
-                    AddServerButton(vm?.SelectedServer?.IconUrl);
+                    AddServerButton(
+                        vm?.SelectedServer?.IconUrl,
+                        vm?.SelectedServer?.Name,
+                        vm?.SelectedServer?.Id ?? 0
+                    );
                 }
             }
         }
 
-        private void AddServerButton(string? iconUrl = null,string? serverName=null)
+        private void AddServerButton(string? iconUrl = null, string? serverName = null, long serverId = 0)
         {
             var mainWindow = Window.GetWindow(this) as MainWindow;
-            mainWindow.AddServerToList(iconUrl, serverName);
+            mainWindow?.AddServerToList(iconUrl, serverName, serverId);
         }
 
     }

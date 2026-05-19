@@ -58,8 +58,8 @@ namespace isegoria_wpf.ViewModels
                 {
                     foreach (var server in servers)
                     {
-                        Debug.WriteLine($"서버: {server.Name}, iconUrl: {server.IconUrl ?? "null"}");
-                        mainWindow.AddServerToList(server.IconUrl, server.Name);
+                        //Debug.WriteLine($"서버: {server.Name}, iconUrl: {server.IconUrl ?? "null"}");
+                        mainWindow.AddServerToList(server.IconUrl, server.Name,server.Id);
                     
                     }
                 }

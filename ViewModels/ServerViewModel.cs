@@ -96,7 +96,6 @@ namespace isegoria_wpf.ViewModels
 
             ErrorMessage = string.Empty;
 
-            // iconUrl 없으면 null로 그냥 생성
             var server = await ApiServer.CreateServerAsync(ServerName, UploadedImageUrl);
 
             if (server != null)
@@ -124,8 +123,6 @@ namespace isegoria_wpf.ViewModels
                 ErrorMessage = "서버 코드를 입력해주세요.";
                 return;
             }
-
-            //@TODO REST API 서버 참여 호출 
 
             ErrorMessage = string.Empty;
 

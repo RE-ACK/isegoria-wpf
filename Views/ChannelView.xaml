@@ -469,113 +469,25 @@
                 <StackPanel Margin="8,16,8,0">
 
                     <!-- 온라인 -->
-                    <TextBlock Text="온라인 - 2"
-                               Foreground="{StaticResource BorderColor}"
-                               FontSize="11"
-                               FontWeight="SemiBold"
-                               Margin="8,0,0,8" />
+                    <TextBlock x:Name="OnlineCountText"
+                       Text="온라인 - 0"
+                       Foreground="{StaticResource BorderColor}"
+                       FontSize="11" FontWeight="SemiBold"
+                       Margin="8,0,0,8"/>
+                    <StackPanel x:Name="OnlineMemberList" Margin="8,0,0,8"/>
 
-                    <StackPanel Margin="8,0,0,8">
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0,0,0,8">
-                            <Grid Width="32"
-                                  Height="32"
-                                  Margin="0,0,8,0">
-                                <Ellipse Width="32"
-                                         Height="32">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="/Assets/default_profile.png" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <!-- 온라인 표시 초록점 -->
-                                <Ellipse Width="10"
-                                         Height="10"
-                                         Fill="#2DB77F"
-                                         HorizontalAlignment="Right"
-                                         VerticalAlignment="Bottom" />
-                            </Grid>
-                            <TextBlock Text="JIK-K"
-                                       Foreground="White"
-                                       FontSize="13"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="32"
-                                  Height="32"
-                                  Margin="0,0,8,0">
-                                <Ellipse Width="32"
-                                         Height="32">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="/Assets/default_profile.png" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <Ellipse Width="10"
-                                         Height="10"
-                                         Fill="#2DB77F"
-                                         HorizontalAlignment="Right"
-                                         VerticalAlignment="Bottom" />
-                            </Grid>
-                            <TextBlock Text="홍길동"
-                                       Foreground="White"
-                                       FontSize="13"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-                    </StackPanel>
-
+     
                     <!-- 오프라인 -->
-                    <TextBlock Text="오프라인 - 2"
+                    <TextBlock x:Name="OfflineCountText"
+                               Text="오프라인 - 0"
                                Foreground="{StaticResource BorderColor}"
                                FontSize="11"
                                FontWeight="SemiBold"
                                Margin="8,16,0,8" />
 
-                    <StackPanel Margin="8,0,0,8">
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0,0,0,8">
-                            <Grid Width="32"
-                                  Height="32"
-                                  Margin="0,0,8,0">
-                                <Ellipse Width="32"
-                                         Height="32">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="/Assets/default_profile.png" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <!-- 오프라인 표시 회색점 -->
-                                <Ellipse Width="10"
-                                         Height="10"
-                                         Fill="#666666"
-                                         HorizontalAlignment="Right"
-                                         VerticalAlignment="Bottom" />
-                            </Grid>
-                            <TextBlock Text="김철수"
-                                       Foreground="#888888"
-                                       FontSize="13"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="32"
-                                  Height="32"
-                                  Margin="0,0,8,0">
-                                <Ellipse Width="32"
-                                         Height="32">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="/Assets/default_profile.png" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <Ellipse Width="10"
-                                         Height="10"
-                                         Fill="#666666"
-                                         HorizontalAlignment="Right"
-                                         VerticalAlignment="Bottom" />
-                            </Grid>
-                            <TextBlock Text="이영희"
-                                       Foreground="#888888"
-                                       FontSize="13"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
+                    <StackPanel x:Name="OfflineMemberList" Margin="8,0,0,8">
+                        
+                        
                     </StackPanel>
 
                 </StackPanel>

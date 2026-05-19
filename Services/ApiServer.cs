@@ -104,6 +104,25 @@ namespace isegoria_wpf.Services
             }
         }
 
+        // [GET] 서버 멤버 목록
+        // GET /api/servers/{serverId}/members
+        public static async Task<List<MemberInfo>?> GetServerMembersAsync(long serverId)
+        {
+            try
+            {
+                var response = await ApiClient._client.GetAsync($"api/servers/{serverId}/members");
+                var raw = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"멤버 목록 응답: {raw}");
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<MemberListResponse>(raw);
+                return result?.Body;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetServerMembersAsync error: {ex.Message}");
+                return null;
+            }
+        }
         // [POST] 초대 코드 재발급
         // POST /api/servers/{serverId}/invite
         public static async Task<string?> RegenerateInviteCodeAsync(long serverId)
