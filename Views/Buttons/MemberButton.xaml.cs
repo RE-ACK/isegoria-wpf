@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,7 @@ namespace isegoria_wpf.Views.Buttons
     /// <summary>
     /// MemberButton.xaml에 대한 상호 작용 논리
     /// </summary>
-    public partial class MemberButton : UserControl
+    public partial class MemberButton : UserControl, INotifyPropertyChanged
     {
         public static readonly DependencyProperty UsernameProperty =
             DependencyProperty.Register("Username", typeof(string), typeof(MemberButton));
@@ -62,9 +63,11 @@ namespace isegoria_wpf.Views.Buttons
             btn.OnPropertyChanged(nameof(TextColor));
         }
 
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         private void OnPropertyChanged(string name)
         {
-            // DependencyProperty 변경 알림
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         public MemberButton()

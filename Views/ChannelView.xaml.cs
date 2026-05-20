@@ -1,9 +1,10 @@
-﻿using isegoria_wpf.Models;
+using isegoria_wpf.Models;
 using isegoria_wpf.Services;
 using isegoria_wpf.Views.Buttons;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static isegoria_wpf.Models.Dtos.channelDto;
+using static isegoria_wpf.Models.Dtos.ServerDto;
 using static System.Net.WebRequestMethods;
 
 namespace isegoria_wpf.Views
@@ -64,6 +66,7 @@ namespace isegoria_wpf.Views
         private long _currentTextChannelId = 0;
 
         private List<(long id, string name)> textChannelList = [];
+        private List<MemberInfo>? _members;
 
         //===================================================================================//
 
@@ -206,17 +209,39 @@ namespace isegoria_wpf.Views
             }
         }
 
-        //임시로 오프라인에 유저목록 몰아넣음
         public async Task LoadMembersAsync()
         {
             var members = await ApiClient.GetServerMembersAsync(_serverId);
             if (members == null) return;
 
+            _members = members;
+
+            // 소켓 서버에 현재 서버 멤버 목록 구독 요청
+            var memberIds = members.Select(m => m.UserId).ToList();
+            await RealtimeClient.Instance.SendPacketAsync(new
+            {
+                type = "SUBSCRIBE_STATUS",
+                userIds = memberIds
+            });
+
+            RenderMembers();
+        }
+
+        private void RenderMembers()
+        {
+            if (_members == null) return;
+
             OnlineMemberList.Children.Clear();
             OfflineMemberList.Children.Clear();
 
-            var onlineList = members.Where(m => m.IsOnline).ToList();
-            var offlineList = members.Where(m => !m.IsOnline).ToList();
+            // RealtimeClient.Instance.OnlineUserIds 기준 최신화
+            var updatedMembers = _members.Select(m => m with 
+            { 
+                IsOnline = RealtimeClient.Instance.OnlineUserIds.Contains(m.UserId) 
+            }).ToList();
+
+            var onlineList = updatedMembers.Where(m => m.IsOnline).ToList();
+            var offlineList = updatedMembers.Where(m => !m.IsOnline).ToList();
 
             OnlineCountText.Text = $"온라인 - {onlineList.Count}";
             OfflineCountText.Text = $"오프라인 - {offlineList.Count}";
@@ -226,7 +251,9 @@ namespace isegoria_wpf.Views
                 var btn = new Views.Buttons.MemberButton
                 {
                     Username = member.Username ?? $"유저 {member.UserId}",
-                    AvatarUrl = member.AvatarUrl?? "pack://application:,,,/Assets/default_profile.png",
+                    AvatarUrl = (!string.IsNullOrEmpty(member.AvatarUrl) && member.AvatarUrl != "null")
+                        ? member.AvatarUrl
+                        : "pack://application:,,,/Assets/default_profile.png",
                     IsOnline = true
                 };
                 OnlineMemberList.Children.Add(btn);
@@ -237,12 +264,13 @@ namespace isegoria_wpf.Views
                 var btn = new Views.Buttons.MemberButton
                 {
                     Username = member.Username ?? $"유저 {member.UserId}",
-                    AvatarUrl = member.AvatarUrl ?? "pack://application:,,,/Assets/default_profile.png",
+                    AvatarUrl = (!string.IsNullOrEmpty(member.AvatarUrl) && member.AvatarUrl != "null")
+                        ? member.AvatarUrl
+                        : "pack://application:,,,/Assets/default_profile.png",
                     IsOnline = false
                 };
                 OfflineMemberList.Children.Add(btn);
             }
-
         }
 
         private async Task<ChannelButton> CreateChannelButtonAsync(ChannelInfo channel)
@@ -326,6 +354,11 @@ namespace isegoria_wpf.Views
                         AddMessageToUI(senderName, senderAvatarUrl, content);
                     }
                 }
+                else if (type == "USER_STATE" || type == "SUBSCRIBE_STATUS_OK")
+                {
+                    // 실시간 유저 상태 변경 또는 구독 리스트 수신 시 로컬 UI 갱신 (무한루프 없음)
+                    RenderMembers();
+                }
             });
         }
 
@@ -339,8 +372,12 @@ namespace isegoria_wpf.Views
 
             // 프로필 이미지
             var ellipse = new Ellipse { Width = 36, Height = 36, Margin = new Thickness(0, 0, 10, 0) };
-            ellipse.Fill = new ImageBrush(new BitmapImage(new Uri(!string.IsNullOrEmpty(senderAvatarurl) ? senderAvatarurl : "pack://application:,,,/Assets/default_profile.png")));
-            //ellipse.Fill = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Assets/default_profile.png")));
+            
+            string avatarUri = (!string.IsNullOrEmpty(senderAvatarurl) && senderAvatarurl != "null")
+                ? senderAvatarurl
+                : "pack://application:,,,/Assets/default_profile.png";
+
+            ellipse.Fill = new ImageBrush(new BitmapImage(new Uri(avatarUri, UriKind.RelativeOrAbsolute)));
 
             // 텍스트 영역
             var textPanel = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
