@@ -12,7 +12,7 @@ namespace isegoria_wpf.Models.Dtos
         // ============================================================ //
 
         public record CreateMessageRequest(
-            [property: JsonPropertyName("channelId")] int ChannelId,
+            [property: JsonPropertyName("channelId")] long ChannelId,
             [property: JsonPropertyName("content")] string Content
         );
     }

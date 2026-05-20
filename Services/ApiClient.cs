@@ -157,7 +157,7 @@ namespace isegoria_wpf.Services
 
         // [POST] 메세지 생성
         // POST /api/message/create        
-        public static async Task<bool> CreateMessageAsync(int channelId, string content)
+        public static async Task<bool> CreateMessageAsync(long channelId, string content)
         {
             try
             {

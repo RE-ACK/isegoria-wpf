@@ -46,11 +46,19 @@ namespace isegoria_wpf.Views
 
             MessageInput.KeyDown += MessageInput_KeyDown;
         }
+        
+
+        //===================================================================================//
 
         private bool _isVoiceMuted = false;
         private bool _isMicMuted = false;
 
         private long _serverId;
+        private long _currentTextChannelId = 0;
+
+        private List<(long id, string name)> textChannelList = [];
+
+        //===================================================================================//
 
         private void Add_File_Click(object sender, RoutedEventArgs e)
         {
@@ -73,7 +81,7 @@ namespace isegoria_wpf.Views
             MessageInput.Clear();
 
             // API 서버에 메시지 저장 (HTTP)
-            var saveResult = await ApiClient.CreateMessageAsync(6, text);
+            var saveResult = await ApiClient.CreateMessageAsync(_currentTextChannelId, text);
 
             if (saveResult)
             {
@@ -136,23 +144,12 @@ namespace isegoria_wpf.Views
             // 나중에 모달 연결
         }
 
-        private async void TextChannel_Click(object sender, RoutedEventArgs e)
-        {
-            long channelId = 6;
-
-            await RealtimeClient.Instance.SendPacketAsync(new
-            {
-                type = "JOIN_TEXT",
-                channelId = channelId
-            });
-        }
-
-        private void VoiceChannel_Click(object sender, RoutedEventArgs e)
-        {
-            VoiceParticipants.Visibility = Visibility.Visible;
-            VoiceStatusBar.Visibility = Visibility.Visible;
-            VoiceChannelNameText.Text = "음성채널1 / 서버이름";
-        }
+        //private void VoiceChannel_Click(object sender, RoutedEventArgs e)
+        //{
+        //    VoiceParticipants.Visibility = Visibility.Visible;
+        //    VoiceStatusBar.Visibility = Visibility.Visible;
+        //    VoiceChannelNameText.Text = "음성채널1 / 서버이름";
+        //}
 
         private void LeaveVoice_Click(object sender, RoutedEventArgs e)
         {
@@ -169,12 +166,18 @@ namespace isegoria_wpf.Views
             TextChannelList.Children.Clear();
             VoiceChannelList.Children.Clear();
 
+            //배열
+            textChannelList.Clear();
+
             foreach (var channel in channels)
             {
-                if (channel.Type == "TEXT")
-                    TextChannelList.Children.Add(CreateChannelButton(channel));
+                if (channel.Type == "TEXT") 
+                { 
+                    TextChannelList.Children.Add(await CreateChannelButtonAsync(channel));
+                    textChannelList.Add((channel.Id, channel.Name));
+                }
                 else if (channel.Type == "VOICE")
-                    VoiceChannelList.Children.Add(CreateChannelButton(channel));
+                    VoiceChannelList.Children.Add(await CreateChannelButtonAsync(channel));
             }
         }
 
@@ -215,10 +218,9 @@ namespace isegoria_wpf.Views
                 OfflineMemberList.Children.Add(btn);
             }
 
-
         }
 
-        private ChannelButton CreateChannelButton(ChannelInfo channel)
+        private async Task<ChannelButton> CreateChannelButtonAsync(ChannelInfo channel)
         {
             var btn = new Views.Buttons.ChannelButton
             {
@@ -229,15 +231,47 @@ namespace isegoria_wpf.Views
                     : "pack://application:,,,/Assets/voice_icon.png"
             };
 
-            btn.ChannelClicked += (s, e) =>
+            if (channel.Type == "TEXT")
+                await JoinTextChannelAsync(channel);
+
+            btn.ChannelClicked += async (s, e) =>
             {
-
-                CurrentChannelNameText.Text = channel.Name;
-
-                Debug.WriteLine($"채널 클릭: {channel.Name}");
+                if (channel.Type == "TEXT")
+                {
+                    await JoinTextChannelAsync(channel);
+                    //CurrentChannelNameText.Text = channel.Name;
+                    //Debug.WriteLine($"채널 클릭: {channel.Name}");
+                }
+                else if (channel.Type == "VOICE")
+                {
+                    // 음성 채널 조인 로직 추가 가능
+                }
+               
             };
 
             return btn;
+        }
+
+        private async Task JoinTextChannelAsync(ChannelInfo channel)
+        {
+            // 1. 현재 활성화된 채널 ID 저장
+            _currentTextChannelId = channel.Id;
+
+            // 2. 상단 헤더에 현재 채널명 표시
+            CurrentChannelNameText.Text = channel.Name;
+
+            // 3. C++ 소켓 서버에 JOIN_TEXT 패킷 전송
+            await RealtimeClient.Instance.SendPacketAsync(new
+            {
+                type = "JOIN_TEXT",
+                channelId = channel.Id // _currentTextChannelId 대신 직관적으로 channel.Id 사용
+            });
+
+            // 4. (선택 사항) 채널 입장 시 기존 메시지 목록 비우기 및 해당 채널의 이전 채팅 기록 HTTP 호출
+            // MessageList.Children.Clear();
+            // await LoadChannelMessagesAsync(channel.Id);
+
+            Debug.WriteLine($"채널 자동/수동 입장 완료: {channel.Name}");
         }
 
         private void OnRealtimePacketReceived(string type, System.Text.Json.JsonElement json)
@@ -255,9 +289,8 @@ namespace isegoria_wpf.Views
                     string senderAvatarUrl = json.GetProperty("avatarUrl").GetString() ?? "";
 
                     Debug.WriteLine(senderAvatarUrl);
-                    // TODO: 임시로 6번 채널 고정이 아닌, 현재 입장 중인 채널ID와 일치하는지 확인
-                    // if (channelId == _currentTextChannelId)
-                    if (channelId == 6)
+
+                     if (channelId == _currentTextChannelId)
                     {
                         // 화면에 받은 메시지 렌더링
                         AddMessageToUI(senderName, senderAvatarUrl, content);

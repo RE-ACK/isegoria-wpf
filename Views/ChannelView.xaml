@@ -63,42 +63,6 @@
                                        Margin="14,0,0,0" />
                         </StackPanel>
 
-                        <!-- 채널 아이템 예시 -->
-                        <Button x:Name="ChannelItem"
-                                HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                Margin="0,6"
-                                Cursor="Hand"
-                                 Click="TextChannel_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="ChannelBorder"
-                                            Background="Transparent"
-                                            CornerRadius="4"
-                                            Padding="18,6">
-                                        <StackPanel Orientation="Horizontal"
-                                                    VerticalAlignment="Center">
-                                            <Image Source="/Assets/chat_icon.png"
-                                                   Width="15"
-                                                   Height="15" />
-                                            <TextBlock Text="채팅채널1"
-                                                       Foreground="White"
-                                                       FontSize="14"
-                                                       VerticalAlignment="Center"
-                                                       Margin="14,0,0,0" />
-                                        </StackPanel>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver"
-                                                 Value="True">
-                                            <Setter TargetName="ChannelBorder"
-                                                    Property="Background"
-                                                    Value="#2A2640" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
                         <StackPanel x:Name="TextChannelList"/>
 
                         <!-- 음성 채널 카테고리 -->
