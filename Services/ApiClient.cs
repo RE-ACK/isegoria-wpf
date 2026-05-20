@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using static isegoria_wpf.Models.Dtos.AuthDto;
+using static isegoria_wpf.Models.Dtos.MessageDto;
 using static isegoria_wpf.Models.Dtos.ServerDto;
 
 namespace isegoria_wpf.Services
@@ -88,6 +89,36 @@ namespace isegoria_wpf.Services
                         Email = result.Body.User.Email,
                         AvatarUrl = result.Body.User.AvatarUrl
                     });
+
+                    // 성공시 C++ 서버 연결 및 AUTH 패킷 전송
+                    var config = new ConfigurationBuilder()
+                        .AddJsonFile("appsettings.json")
+                        .Build();
+
+                    string host = config["Realtime:Host"]!;
+                    int port = int.Parse(config["Realtime:Port"]!);
+
+                    await RealtimeClient.Instance.ConnectAsync(host, port);
+                    await RealtimeClient.Instance.SendPacketAsync(new
+                    {
+                        type = "AUTH",
+                        token = result.Body.ServerTokens.AccessToken
+                    });
+
+                    RealtimeClient.Instance.OnPacketReceived += (type, json) =>
+                    {
+                        if (type == "AUTH_OK")
+                        {
+                            // sessionToken 저장
+                            var sessionToken = json.GetProperty("sessionToken").ToString();
+                            CredentialManager.SaveSessionToken(sessionToken);
+                        }
+                        else if (type == "AUTH_FAIL")
+                        {
+                            // 연결 끊기
+                            RealtimeClient.Instance.Disconnect();
+                        }
+                    };
                 }
 
                 return result;
@@ -119,6 +150,35 @@ namespace isegoria_wpf.Services
             {
                 Debug.WriteLine($"UpdateUserAsync error: {ex.Message}");
                 return null;
+            }
+        }
+        //====================================================================================//
+
+        // [POST] 메세지 생성
+        // POST /api/message/create        
+        public static async Task<bool> CreateMessageAsync(int channelId, string content)
+        {
+            try
+            {
+                var request = new CreateMessageRequest(channelId, content);
+                var response = await ApiClient._client.PostAsJsonAsync("api/messages/create", request);
+
+                var raw = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"상태코드: {response.StatusCode}");
+                Debug.WriteLine($"응답 원문: {raw}");
+
+                //var result = System.Text.Json.JsonSerializer.Deserialize<ServerResponse>(raw);
+
+                //Debug.WriteLine($"=== 메세지 생성 결과 ===");
+                //Debug.WriteLine($"server.Name: {result?.Body?.Name ?? "null"}");
+                //Debug.WriteLine($"server.IconUrl: {result?.Body?.IconUrl ?? "null"}");
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"CreateServerAsync error: {ex.Message}");
+                return false;
             }
         }
 

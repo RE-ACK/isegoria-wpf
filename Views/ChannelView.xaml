@@ -68,7 +68,8 @@
                                 HorizontalContentAlignment="Left"
                                 Background="Transparent"
                                 Margin="0,6"
-                                Cursor="Hand">
+                                Cursor="Hand"
+                                 Click="TextChannel_Click">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="ChannelBorder"

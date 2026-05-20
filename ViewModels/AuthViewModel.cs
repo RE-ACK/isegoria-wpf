@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using isegoria_wpf.Models;
 using isegoria_wpf.Services;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,7 +70,6 @@ namespace isegoria_wpf.ViewModels
             if(result?.StatusCode == 200)
             {
                 // 성공 시 메인윈도우 전환
-
                 mainWindow.UserProfileButton.AvatarUrl = User.CurrentUser?.AvatarUrl;
 
                 var servers = await ApiClient.GetMyServersAsync();

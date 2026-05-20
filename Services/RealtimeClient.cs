@@ -12,14 +12,14 @@ namespace isegoria_wpf.Services
     public class RealtimeClient
     {
         private static readonly RealtimeClient _instance = new RealtimeClient();
-        public static RealtimeClient instance => _instance;
+        public static RealtimeClient Instance => _instance;
 
         private TcpClient? _tcpClient;
         private NetworkStream? _stream;
         private CancellationTokenSource _cts;
 
         // 패킷 수신 이벤트
-        public event Action<string, JsonElement>? onPacketReceived;
+        public event Action<string, JsonElement>? OnPacketReceived;
 
         private RealtimeClient() { }
 
@@ -81,7 +81,7 @@ namespace isegoria_wpf.Services
                     if (doc.RootElement.TryGetProperty("type", out var typeProp))
                     {
                         string type = typeProp.GetString() ?? "";
-                        onPacketReceived?.Invoke(type, doc.RootElement);
+                        OnPacketReceived?.Invoke(type, doc.RootElement);
                     }
                 }
             }

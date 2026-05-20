@@ -1,4 +1,5 @@
-﻿using isegoria_wpf.Views.Modals;
+﻿using isegoria_wpf.Services;
+using isegoria_wpf.Views.Modals;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
@@ -27,7 +28,11 @@ namespace isegoria_wpf
 
             UserProfileButton.ProfileClicked += OnProfileClicked;
         }
-
+        protected override void OnClosed(EventArgs e)
+        {
+            RealtimeClient.Instance.Disconnect();
+            base.OnClosed(e);
+        }
 
         public void UpdateMainContent(string? serverName = null)
         {
@@ -94,6 +99,9 @@ namespace isegoria_wpf
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
-            => this.Close();
+        {
+            RealtimeClient.Instance.Disconnect();
+            this.Close();
+        }
     }
 }

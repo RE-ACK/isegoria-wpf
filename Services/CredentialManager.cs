@@ -1,5 +1,6 @@
 ﻿using CredentialManagement;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Text;
 
@@ -9,6 +10,7 @@ namespace isegoria_wpf.Services
     {
         private const string AccessTokenKey = "isegoria_access_token";
         private const string RefreshTokenKey = "isegoria_refresh_token";
+        private const string SessionTokenKey = "isegoria_session_token";
 
         public static void SaveToken(string accessToken, string refreshToken)
         {
@@ -29,6 +31,18 @@ namespace isegoria_wpf.Services
                 PersistanceType = PersistanceType.LocalComputer
             };
             refreshCred.Save();
+        }
+
+        public static void SaveSessionToken(string sessionToken)
+        {
+            using var sessionCred = new Credential
+            {
+                Target = SessionTokenKey,
+                Username = SessionTokenKey,
+                Password = sessionToken,
+                PersistanceType = PersistanceType.LocalComputer
+            };
+            sessionCred.Save();
         }
 
         public static string? GetAccessToken(string accessToken)
