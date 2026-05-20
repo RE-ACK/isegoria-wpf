@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static isegoria_wpf.Models.Dtos.channelDto;
+using static System.Net.WebRequestMethods;
 
 namespace isegoria_wpf.Views
 {
@@ -42,6 +43,12 @@ namespace isegoria_wpf.Views
             this.Unloaded += (s, e) =>
             {
                 RealtimeClient.Instance.OnPacketReceived -= OnRealtimePacketReceived;
+
+                if (_currentTextChannelId != 0)
+                {
+                    _ = RealtimeClient.Instance.SendPacketAsync(new { type = "LEAVE_TEXT" });
+                    _currentTextChannelId = 0;
+                }
             };
 
             MessageInput.KeyDown += MessageInput_KeyDown;
@@ -165,19 +172,37 @@ namespace isegoria_wpf.Views
 
             TextChannelList.Children.Clear();
             VoiceChannelList.Children.Clear();
-
-            //배열
             textChannelList.Clear();
+
+            // 첫 번째 텍스트 채널을 기억할 변수
+            ChannelInfo? firstTextChannel = null;
 
             foreach (var channel in channels)
             {
-                if (channel.Type == "TEXT") 
-                { 
-                    TextChannelList.Children.Add(await CreateChannelButtonAsync(channel));
+                if (channel.Type == "TEXT")
+                {
+                    // CreateChannelButtonAsync에서 자동조인 코드를 뺐으므로 await만 수행하여 버튼을 받음
+                    var btn = await CreateChannelButtonAsync(channel);
+                    TextChannelList.Children.Add(btn);
                     textChannelList.Add((channel.Id, channel.Name));
+
+                    // 첫 번째 채팅 채널 저장
+                    if (firstTextChannel == null)
+                    {
+                        firstTextChannel = channel;
+                    }
                 }
                 else if (channel.Type == "VOICE")
-                    VoiceChannelList.Children.Add(await CreateChannelButtonAsync(channel));
+                {
+                    var btn = await CreateChannelButtonAsync(channel);
+                    VoiceChannelList.Children.Add(btn);
+                }
+            }
+
+            // 루프가 끝나고 화면 배치가 완료된 후에 첫 번째 채널에 딱 한 번만 자동 입장
+            if (firstTextChannel != null)
+            {
+                await JoinTextChannelAsync(firstTextChannel);
             }
         }
 
@@ -231,22 +256,16 @@ namespace isegoria_wpf.Views
                     : "pack://application:,,,/Assets/voice_icon.png"
             };
 
-            if (channel.Type == "TEXT")
-                await JoinTextChannelAsync(channel);
-
             btn.ChannelClicked += async (s, e) =>
             {
                 if (channel.Type == "TEXT")
                 {
                     await JoinTextChannelAsync(channel);
-                    //CurrentChannelNameText.Text = channel.Name;
-                    //Debug.WriteLine($"채널 클릭: {channel.Name}");
                 }
                 else if (channel.Type == "VOICE")
                 {
                     // 음성 채널 조인 로직 추가 가능
                 }
-               
             };
 
             return btn;
@@ -254,21 +273,32 @@ namespace isegoria_wpf.Views
 
         private async Task JoinTextChannelAsync(ChannelInfo channel)
         {
-            // 1. 현재 활성화된 채널 ID 저장
+            if (_currentTextChannelId != 0 && _currentTextChannelId != channel.Id)
+            {
+                await RealtimeClient.Instance.SendPacketAsync(new
+                {
+                    type = "LEAVE_TEXT"
+                });
+                Debug.WriteLine($"기존 채널 퇴장 요청: {_currentTextChannelId}");
+            }
+
+            // 현재 활성화된 채널 ID 저장
             _currentTextChannelId = channel.Id;
 
-            // 2. 상단 헤더에 현재 채널명 표시
+            // 상단 헤더에 현재 채널명 표시
             CurrentChannelNameText.Text = channel.Name;
 
-            // 3. C++ 소켓 서버에 JOIN_TEXT 패킷 전송
+            // C++ 소켓 서버에 JOIN_TEXT 패킷 전송
             await RealtimeClient.Instance.SendPacketAsync(new
             {
                 type = "JOIN_TEXT",
                 channelId = channel.Id // _currentTextChannelId 대신 직관적으로 channel.Id 사용
             });
 
-            // 4. (선택 사항) 채널 입장 시 기존 메시지 목록 비우기 및 해당 채널의 이전 채팅 기록 HTTP 호출
-            // MessageList.Children.Clear();
+            // 채널 입장 시 기존 메시지 목록 비우기 
+            MessageList.Children.Clear();
+
+            // 해당 채널의 이전 채팅 기록 HTTP 호출
             // await LoadChannelMessagesAsync(channel.Id);
 
             Debug.WriteLine($"채널 자동/수동 입장 완료: {channel.Name}");

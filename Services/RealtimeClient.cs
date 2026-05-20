@@ -81,7 +81,23 @@ namespace isegoria_wpf.Services
                     if (doc.RootElement.TryGetProperty("type", out var typeProp))
                     {
                         string type = typeProp.GetString() ?? "";
-                        OnPacketReceived?.Invoke(type, doc.RootElement);
+
+                        // 서버가 보낸 PING 패킷을 감지하면 자동 응답
+                        if (type == "PING")
+                        {
+                            // 비동기로 서버에 "PING" 패킷을 돌려보내 세션 만료를 방지합니다.
+                            _ = SendPacketAsync(new { type = "PING" });
+                        }
+                        else if (type == "PONG")
+                        {
+                            // 서버가 돌려준 PONG 패킷은 무시하거나 디버그 로그에만 기록합니다.
+                            System.Diagnostics.Debug.WriteLine("[RealtimeClient] PONG received.");
+                        }
+                        else
+                        {
+                            // PING/PONG이 아닌 실제 컨텐츠 패킷들만 View로 전달
+                            OnPacketReceived?.Invoke(type, doc.RootElement);
+                        }
                     }
                 }
             }
