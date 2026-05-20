@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
@@ -16,7 +16,7 @@ namespace isegoria_wpf.Services
 
         private TcpClient? _tcpClient;
         private NetworkStream? _stream;
-        private CancellationTokenSource _cts;
+        private CancellationTokenSource? _cts;
 
         // 패킷 수신 이벤트
         public event Action<string, JsonElement>? OnPacketReceived;

@@ -13,8 +13,13 @@
                 Margin="0,0,0,4"
                 Click="ServerButton_Click"
                 ToolTip="{Binding ServerName, ElementName=Root}">
-            <Image Source="{Binding IconUrl, ElementName=Root}"
-                   Width="35" Height="35"/>
+            <Image Width="35" Height="35">
+                <Image.Source>
+                    <Binding Path="IconUrl" ElementName="Root"
+                 FallbackValue="pack://application:,,,/Assets/default_profile.png"
+                 TargetNullValue="pack://application:,,,/Assets/default_profile.png"/>
+                </Image.Source>
+            </Image>
         </Button>
 
        

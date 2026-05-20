@@ -56,7 +56,7 @@
                             <Image Source="/Assets/arrow_right_icon.png"
                                    Width="15"
                                    Height="15" />
-                            <TextBlock Text="채팅"
+                            <TextBlock Text="채팅 채널"
                                        Foreground="White"
                                        FontSize="16"
                                        FontWeight="Medium"
@@ -99,53 +99,22 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
+                        <StackPanel x:Name="TextChannelList"/>
 
                         <!-- 음성 채널 카테고리 -->
                         <StackPanel Orientation="Horizontal">
                             <Image Source="/Assets/arrow_right_icon.png"
                                    Width="15"
                                    Height="15" />
-                            <TextBlock Text="음성"
+                            <TextBlock Text="음성 채널"
                                        Foreground="White"
                                        FontSize="16"
                                        FontWeight="Medium"
                                        Margin="14,0,0,0" />
                         </StackPanel>
 
-                        <Button HorizontalContentAlignment="Left"
-                                Background="Transparent"
-                                Margin="0,6"
-                                Cursor="Hand"
-                                Click="VoiceChannel_Click">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border x:Name="ChannelBorder"
-                                            Background="Transparent"
-                                            CornerRadius="4"
-                                            Padding="18,6">
-                                        <StackPanel Orientation="Horizontal"
-                                                    VerticalAlignment="Center">
-                                            <Image Source="/Assets/voice_icon.png"
-                                                   Width="15"
-                                                   Height="15" />
-                                            <TextBlock Text="음성채널1"
-                                                       Foreground="White"
-                                                       FontSize="14"
-                                                       VerticalAlignment="Center"
-                                                       Margin="14,0,0,0" />
-                                        </StackPanel>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver"
-                                                 Value="True">
-                                            <Setter TargetName="ChannelBorder"
-                                                    Property="Background"
-                                                    Value="#2A2640" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                        <StackPanel x:Name="VoiceChannelList"/>
+
                         <!-- 참여자 목록 (항상 표시, 없으면 Collapsed) -->
                         <StackPanel x:Name="VoiceParticipants"
                                     Visibility="Collapsed"
@@ -367,7 +336,8 @@
                     <Image Source="/Assets/chat_icon.png"
                            Width="15"
                            Height="15" />
-                    <TextBlock Text="일반"
+                    <TextBlock x:Name="CurrentChannelNameText"
+                               Text="일반"
                                Foreground="White"
                                FontSize="14"
                                VerticalAlignment="Center"

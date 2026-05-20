@@ -11,9 +11,18 @@
         <Grid Width="32" Height="32" Margin="0,0,8,0">
             <Ellipse Width="32" Height="32">
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="{Binding AvatarUrl, ElementName=Root,
-                                FallbackValue=/Assets/default_profile.png,
-                                TargetNullValue=/Assets/default_profile.png}"/>
+                    <ImageBrush>
+                        <ImageBrush.ImageSource>
+                            <Binding Path="AvatarUrl" ElementName="Root">
+                                <Binding.FallbackValue>
+                                    <BitmapImage UriSource="pack://application:,,,/Assets/default_profile.png"/>
+                                </Binding.FallbackValue>
+                                <Binding.TargetNullValue>
+                                    <BitmapImage UriSource="pack://application:,,,/Assets/default_profile.png"/>
+                                </Binding.TargetNullValue>
+                            </Binding>
+                        </ImageBrush.ImageSource>
+                    </ImageBrush>
                 </Ellipse.Fill>
             </Ellipse>
 

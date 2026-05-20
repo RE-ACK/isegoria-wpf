@@ -1,5 +1,6 @@
 ﻿using isegoria_wpf.Models;
 using isegoria_wpf.Services;
+using isegoria_wpf.Views.Buttons;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static isegoria_wpf.Models.Dtos.channelDto;
 
 namespace isegoria_wpf.Views
 {
@@ -34,6 +36,7 @@ namespace isegoria_wpf.Views
             this.Loaded += (s, e) =>
             {
                 _ = LoadMembersAsync();
+                _ = LoadChannelsAsync();
                 RealtimeClient.Instance.OnPacketReceived += OnRealtimePacketReceived;
             };
             this.Unloaded += (s, e) =>
@@ -157,8 +160,25 @@ namespace isegoria_wpf.Views
             VoiceStatusBar.Visibility = Visibility.Collapsed;
         }
 
-        //임시로 오프라인에 유저목록 몰아넣음
+        //채널 목록 불러오기
+        private async Task LoadChannelsAsync()
+        {
+            var channels = await ApiClient.GetChannelsAsync(_serverId);
+            if (channels == null) return;
 
+            TextChannelList.Children.Clear();
+            VoiceChannelList.Children.Clear();
+
+            foreach (var channel in channels)
+            {
+                if (channel.Type == "TEXT")
+                    TextChannelList.Children.Add(CreateChannelButton(channel));
+                else if (channel.Type == "VOICE")
+                    VoiceChannelList.Children.Add(CreateChannelButton(channel));
+            }
+        }
+
+        //임시로 오프라인에 유저목록 몰아넣음
         public async Task LoadMembersAsync()
         {
             var members = await ApiClient.GetServerMembersAsync(_serverId);
@@ -194,6 +214,30 @@ namespace isegoria_wpf.Views
                 };
                 OfflineMemberList.Children.Add(btn);
             }
+
+
+        }
+
+        private ChannelButton CreateChannelButton(ChannelInfo channel)
+        {
+            var btn = new Views.Buttons.ChannelButton
+            {
+                ChannelName = channel.Name,
+                ChannelId = channel.Id,
+                IconSource = channel.Type == "TEXT"
+                    ? "pack://application:,,,/Assets/chat_icon.png"
+                    : "pack://application:,,,/Assets/voice_icon.png"
+            };
+
+            btn.ChannelClicked += (s, e) =>
+            {
+
+                CurrentChannelNameText.Text = channel.Name;
+
+                Debug.WriteLine($"채널 클릭: {channel.Name}");
+            };
+
+            return btn;
         }
 
         private void OnRealtimePacketReceived(string type, System.Text.Json.JsonElement json)

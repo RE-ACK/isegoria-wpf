@@ -35,5 +35,6 @@ namespace isegoria_wpf.Views.Buttons
             ProfileClicked?.Invoke(this, e);
         }
 
+
     }
 }

@@ -7,19 +7,25 @@
              mc:Ignorable="d" 
             x:Name="Root">
     <Button Cursor="Hand"
-            Width="{Binding Width, ElementName=Root}"
-            Height="{Binding Height, ElementName=Root}"
-            Click="ProfileButton_Click"
-            >
+        Width="{Binding Width, ElementName=Root}"
+        Height="{Binding Height, ElementName=Root}"
+        Click="ProfileButton_Click">
         <Button.Template>
             <ControlTemplate TargetType="Button">
-                <Ellipse Width="{Binding Width, ElementName=Root}"
-                         Height="{Binding Height, ElementName=Root}">
+                <Ellipse Width="32" Height="32">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding AvatarUrl, ElementName=Root,
-                            FallbackValue=/Assets/default_profile.png,
-                             TargetNullValue=/Assets/default_profile.png}"/>
-
+                        <ImageBrush>
+                            <ImageBrush.ImageSource>
+                                <Binding Path="AvatarUrl" ElementName="Root">
+                                    <Binding.FallbackValue>
+                                        <BitmapImage UriSource="pack://application:,,,/Assets/default_profile.png"/>
+                                    </Binding.FallbackValue>
+                                    <Binding.TargetNullValue>
+                                        <BitmapImage UriSource="pack://application:,,,/Assets/default_profile.png"/>
+                                    </Binding.TargetNullValue>
+                                </Binding>
+                            </ImageBrush.ImageSource>
+                        </ImageBrush>
                     </Ellipse.Fill>
                 </Ellipse>
             </ControlTemplate>

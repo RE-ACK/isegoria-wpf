@@ -1,0 +1,43 @@
+<UserControl x:Class="isegoria_wpf.Views.Buttons.ChannelButton"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:isegoria_wpf.Views.Buttons"
+             mc:Ignorable="d" 
+              x:Name="Root"
+            >
+
+    <Button HorizontalContentAlignment="Left"
+            Background="Transparent"
+            Margin="0,6"
+            Cursor="Hand"
+            Click="ChannelButton_Click">
+        <Button.Template>
+            <ControlTemplate TargetType="Button">
+                <Border x:Name="ChannelBorder"
+                        Background="Transparent"
+                        CornerRadius="4"
+                        Padding="18,6">
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <Image Source="{Binding IconSource, ElementName=Root}"
+                               Width="15" Height="15"/>
+                        <TextBlock Text="{Binding ChannelName, ElementName=Root}"
+                                   Foreground="White"
+                                   FontSize="14"
+                                   VerticalAlignment="Center"
+                                   Margin="14,0,0,0"/>
+                    </StackPanel>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="ChannelBorder"
+                                Property="Background"
+                                Value="#2A2640"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Button.Template>
+    </Button>
+</UserControl>

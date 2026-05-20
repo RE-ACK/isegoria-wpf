@@ -9,6 +9,7 @@ using System.Net.Http.Json;
 using System.Text;
 using static isegoria_wpf.Models.Dtos.AuthDto;
 using static isegoria_wpf.Models.Dtos.MessageDto;
+using static isegoria_wpf.Models.Dtos.channelDto;
 using static isegoria_wpf.Models.Dtos.ServerDto;
 
 namespace isegoria_wpf.Services
@@ -262,7 +263,7 @@ namespace isegoria_wpf.Services
             {
                 var response = await ApiClient._client.GetAsync($"api/servers/{serverId}/members");
                 var raw = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"멤버 목록 응답: {raw}");
+                //Debug.WriteLine($"멤버 목록 응답: {raw}");
 
                 var result = System.Text.Json.JsonSerializer.Deserialize<MemberListResponse>(raw);
                 return result?.Body;
@@ -359,6 +360,47 @@ namespace isegoria_wpf.Services
             catch (Exception ex)
             {
                 Debug.WriteLine($"UploadImagesAsync error: {ex.Message}");
+                return null;
+            }
+        }
+
+        // [GET] 채널 목록 조회
+        // GET /api/channels/all?serverId={serverId}
+        public static async Task<List<ChannelInfo>?> GetChannelsAsync(long serverId)
+        {
+            try
+            {
+                var response = await ApiClient._client.GetAsync($"api/channels/all?serverId={serverId}");
+                var raw = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"채널 목록 응답: {raw}");
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<ChannelListResponse>(raw);
+                return result?.Body;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetChannelsAsync error: {ex.Message}");
+                return null;
+            }
+        }
+
+        // [POST] 채널 생성
+        // POST /api/channels/create
+        public static async Task<ChannelInfo?> CreateChannelAsync(long serverId, string name, string type)
+        {
+            try
+            {
+                var request = new CreateChannelRequest(serverId, name, type);
+                var response = await ApiClient._client.PostAsJsonAsync("api/channels/create", request);
+
+                var raw = await response.Content.ReadAsStringAsync();
+
+                var result = System.Text.Json.JsonSerializer.Deserialize<ChannelResponse>(raw);
+                return result?.Body;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"CreateChannelAsync error: {ex.Message}");
                 return null;
             }
         }
