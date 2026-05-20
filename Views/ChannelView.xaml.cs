@@ -250,6 +250,9 @@ namespace isegoria_wpf.Views
 
             btn.ChannelClicked += (s, e) =>
             {
+
+                CurrentChannelNameText.Text = channel.Name;
+
                 Debug.WriteLine($"채널 클릭: {channel.Name}");
             };
 
