@@ -71,7 +71,7 @@ namespace isegoria_wpf.ViewModels
 
 
             IsUploading = true;
-            var urls = await ApiServer.UploadImagesAsync(SelectedImagePath);
+            var urls = await ApiClient.UploadImagesAsync(SelectedImagePath);
             UploadedImageUrl = urls?.FirstOrDefault();
             IsUploading = false; 
 
@@ -96,7 +96,7 @@ namespace isegoria_wpf.ViewModels
 
             ErrorMessage = string.Empty;
 
-            var server = await ApiServer.CreateServerAsync(ServerName, UploadedImageUrl);
+            var server = await ApiClient.CreateServerAsync(ServerName, UploadedImageUrl);
 
             if (server != null)
             {
@@ -126,7 +126,7 @@ namespace isegoria_wpf.ViewModels
 
             ErrorMessage = string.Empty;
 
-            var (server, message) = await ApiServer.JoinServerAsync(ServerCode);
+            var (server, message) = await ApiClient.JoinServerAsync(ServerCode);
 
             if (server != null)
             {

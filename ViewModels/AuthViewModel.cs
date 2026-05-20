@@ -72,7 +72,7 @@ namespace isegoria_wpf.ViewModels
 
                 mainWindow.UserProfileButton.AvatarUrl = User.CurrentUser?.AvatarUrl;
 
-                var servers = await ApiServer.GetMyServersAsync();
+                var servers = await ApiClient.GetMyServersAsync();
                 if (servers != null)
                 {
                     foreach (var server in servers)

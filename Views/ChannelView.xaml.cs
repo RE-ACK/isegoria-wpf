@@ -175,7 +175,7 @@ namespace isegoria_wpf.Views
 
         public async Task LoadMembersAsync()
         {
-            var members = await ApiServer.GetServerMembersAsync(_serverId);
+            var members = await ApiClient.GetServerMembersAsync(_serverId);
             if (members == null) return;
 
             OnlineMemberList.Children.Clear();

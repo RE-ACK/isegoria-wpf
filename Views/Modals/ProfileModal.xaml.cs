@@ -95,7 +95,7 @@ namespace isegoria_wpf.Views.Modals
 
                 vm.IsUploading = true;
 
-                var urls = await ApiServer.UploadImagesAsync(_selectedImagePath);
+                var urls = await ApiClient.UploadImagesAsync(_selectedImagePath);
                 vm.UploadedAvatarUrl = urls?.FirstOrDefault();
 
                 vm.IsUploading = false;  
