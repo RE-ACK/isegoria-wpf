@@ -23,7 +23,6 @@ namespace isegoria_wpf
         {
             InitializeComponent();
             UpdateMainContent();
-            //MainContent.Content = new ChatArea();
 
             UserProfileButton.ProfileClicked += OnProfileClicked;
         }
@@ -64,7 +63,7 @@ namespace isegoria_wpf
         {
             var serverButton = new Views.Buttons.ServerButton
             {
-                IconUrl = iconUrl ?? "/Assets/default_profile.png",
+                IconUrl = iconUrl ?? "pack://application:,,,/Assets/default_profile.png",
                 ServerName = serverName ?? string.Empty
             };
 
