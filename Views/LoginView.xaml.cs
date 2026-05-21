@@ -20,7 +20,9 @@ namespace isegoria_wpf.Views
         public LoginView()
         {
             InitializeComponent();
+
         }
+
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is AuthViewModel vm)

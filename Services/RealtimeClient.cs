@@ -15,6 +15,7 @@ namespace isegoria_wpf.Services
         public static RealtimeClient Instance => _instance;
 
         public HashSet<long> OnlineUserIds { get; } = new HashSet<long>();
+        public byte[]? SessionToken { get; private set; }
 
         private TcpClient? _tcpClient;
         private NetworkStream? _stream;
@@ -101,6 +102,16 @@ namespace isegoria_wpf.Services
                                             OnlineUserIds.Add(item.GetInt64());
                                         }
                                     }
+                                }
+
+                                if (doc.RootElement.TryGetProperty("sessionToken", out var tokenProp) && tokenProp.ValueKind == JsonValueKind.Array)
+                                {
+                                    List<byte> tokenBytes = new List<byte>();
+                                    foreach (var bVal in tokenProp.EnumerateArray())
+                                    {
+                                        tokenBytes.Add(bVal.GetByte());
+                                    }
+                                    SessionToken = tokenBytes.ToArray();
                                 }
                             }
                             else if (type == "SUBSCRIBE_STATUS_OK")

@@ -83,20 +83,7 @@
                         <StackPanel x:Name="VoiceParticipants"
                                     Visibility="Collapsed"
                                     Margin="34,0,0,0">
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0,4">
-                                <Ellipse Width="15"
-                                         Height="15"
-                                         Margin="0,0,8,0">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="/Assets/default_profile.png" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                                <TextBlock Text="사용자명"
-                                           Foreground="White"
-                                           FontSize="12"
-                                           VerticalAlignment="Center" />
-                            </StackPanel>
+                            
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

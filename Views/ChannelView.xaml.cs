@@ -51,6 +51,18 @@ namespace isegoria_wpf.Views
                     _ = RealtimeClient.Instance.SendPacketAsync(new { type = "LEAVE_TEXT" });
                     _currentTextChannelId = 0;
                 }
+
+                // 음성 채널 참여 중이면 자원 해제
+                if (_currentVoiceChannelId != 0)
+                {
+                    _ = VoiceClient.Instance.LeaveVoiceChannelAsync();
+                    _currentVoiceChannelId = 0;
+                }
+
+                VoiceParticipants.Children.Clear();
+                VoiceParticipants.Visibility = Visibility.Collapsed;
+                VoiceStatusBar.Visibility = Visibility.Collapsed;
+                _members = null;
             };
 
             MessageInput.KeyDown += MessageInput_KeyDown;
@@ -59,8 +71,7 @@ namespace isegoria_wpf.Views
 
         //===================================================================================//
 
-        private bool _isVoiceMuted = false;
-        private bool _isMicMuted = false;
+        private long _currentVoiceChannelId = 0;
 
         private long _serverId;
         private long _currentTextChannelId = 0;
@@ -121,14 +132,15 @@ namespace isegoria_wpf.Views
 
         private void VoiceToggle_Click(object sender, RoutedEventArgs e)
         {
-            _isVoiceMuted = !_isVoiceMuted;
+            // 헤드셋(귀막기) 토글
+            VoiceClient.Instance.IsDeafened = !VoiceClient.Instance.IsDeafened;
             if (sender is Button btn)
             {
                 btn.ApplyTemplate();
                 if (btn.Template.FindName("VoiceIcon", btn) is Image img)
                 {
                     img.Source = new BitmapImage(new Uri(
-                        _isVoiceMuted ? "/Assets/voice_mute_icon.png" : "/Assets/voice_icon.png",
+                        VoiceClient.Instance.IsDeafened ? "/Assets/voice_mute_icon.png" : "/Assets/voice_icon.png",
                         UriKind.Relative));
                 }
             }
@@ -136,14 +148,15 @@ namespace isegoria_wpf.Views
 
         private void MicToggle_Click(object sender, RoutedEventArgs e)
         {
-            _isMicMuted = !_isMicMuted;
+            // 마이크 음소거 토글
+            VoiceClient.Instance.IsMuted = !VoiceClient.Instance.IsMuted;
             if (sender is Button btn)
             {
                 btn.ApplyTemplate();
                 if (btn.Template.FindName("MicIcon", btn) is Image img)
                 {
                     img.Source = new BitmapImage(new Uri(
-                        _isMicMuted ? "/Assets/mic_mute_icon.png" : "/Assets/mic_icon.png",
+                        VoiceClient.Instance.IsMuted ? "/Assets/mic_mute_icon.png" : "/Assets/mic_icon.png",
                         UriKind.Relative));
                 }
             }
@@ -163,8 +176,11 @@ namespace isegoria_wpf.Views
 
         private void LeaveVoice_Click(object sender, RoutedEventArgs e)
         {
+            _ = VoiceClient.Instance.LeaveVoiceChannelAsync();
+            _currentVoiceChannelId = 0;
             VoiceParticipants.Visibility = Visibility.Collapsed;
             VoiceStatusBar.Visibility = Visibility.Collapsed;
+            VoiceParticipants.Children.Clear();
         }
 
         //채널 목록 불러오기
@@ -292,7 +308,7 @@ namespace isegoria_wpf.Views
                 }
                 else if (channel.Type == "VOICE")
                 {
-                    // 음성 채널 조인 로직 추가 가능
+                    await JoinVoiceChannelAsync(channel);
                 }
             };
 
@@ -326,7 +342,7 @@ namespace isegoria_wpf.Views
             // 채널 입장 시 기존 메시지 목록 비우기 
             MessageList.Children.Clear();
 
-            // 해당 채널의 이전 채팅 기록 HTTP 호출
+            // @TODO해당 채널의 이전 채팅 기록 HTTP 호출
             // await LoadChannelMessagesAsync(channel.Id);
 
             Debug.WriteLine($"채널 자동/수동 입장 완료: {channel.Name}");
@@ -348,7 +364,7 @@ namespace isegoria_wpf.Views
 
                     Debug.WriteLine(senderAvatarUrl);
 
-                     if (channelId == _currentTextChannelId)
+                    if (channelId == _currentTextChannelId)
                     {
                         // 화면에 받은 메시지 렌더링
                         AddMessageToUI(senderName, senderAvatarUrl, content);
@@ -359,7 +375,95 @@ namespace isegoria_wpf.Views
                     // 실시간 유저 상태 변경 또는 구독 리스트 수신 시 로컬 UI 갱신 (무한루프 없음)
                     RenderMembers();
                 }
+                else if (type == "VOICE_STATE")
+                {
+                    if (json.TryGetProperty("userId", out var userProp) &&
+                        json.TryGetProperty("channelId", out var chProp) &&
+                        json.TryGetProperty("joined", out var joinProp))
+                    {
+                        long voiceUserId = userProp.GetInt64();
+                        long voiceChannelId = (long)chProp.GetUInt64();
+                        bool joined = joinProp.GetBoolean();
+
+                        Debug.WriteLine("나여");
+                        Debug.WriteLine(voiceUserId);
+                        UpdateVoiceParticipantsUI(voiceUserId, joined);
+                    }
+                }
             });
+        }
+
+        private async Task JoinVoiceChannelAsync(ChannelInfo channel)
+        {
+            if (_currentVoiceChannelId == channel.Id) return;
+
+            _currentVoiceChannelId = channel.Id;
+
+            // VoiceClient에 입장 요청
+            await VoiceClient.Instance.JoinVoiceChannelAsync(channel.Id);
+
+            // VoiceStatusBar 상단에 채널명 표시 및 상태 바 활성화
+            VoiceChannelNameText.Text = $"{channel.Name}";
+            VoiceParticipants.Visibility = Visibility.Visible;
+            VoiceStatusBar.Visibility = Visibility.Visible;
+        }
+
+        private void UpdateVoiceParticipantsUI(long userId, bool joined)
+        {
+            string tag = $"voice_user_{userId}";
+
+            if (joined)
+            {
+                // 이미 존재하면 추가하지 않음
+                foreach (UIElement el in VoiceParticipants.Children)
+                {
+                    if (el is StackPanel sp && sp.Tag?.ToString() == tag) return;
+                }
+
+                // 해당 멤버 정보 조회
+                var member = _members?.FirstOrDefault(m => m.UserId == userId);
+                string displayName = member?.Username ?? $"유저 {userId}";
+                string avatarUrl = (!string.IsNullOrEmpty(member?.AvatarUrl) && member?.AvatarUrl != "null")
+                    ? member!.AvatarUrl!
+                    : "pack://application:,,,/Assets/default_profile.png";
+
+                var row = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(0, 4, 0, 0),
+                    Tag = tag
+                };
+
+                var ellipse = new Ellipse { Width = 15, Height = 15, Margin = new Thickness(0, 0, 8, 0) };
+                ellipse.Fill = new ImageBrush(new BitmapImage(new Uri(avatarUrl, UriKind.RelativeOrAbsolute)));
+
+                var nameText = new TextBlock
+                {
+                    Text = displayName,
+                    Foreground = Brushes.White,
+                    FontSize = 12,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                row.Children.Add(ellipse);
+                row.Children.Add(nameText);
+                VoiceParticipants.Children.Add(row);
+            }
+            else
+            {
+                // 퇴장한 유저 행 제거
+                UIElement? toRemove = null;
+                foreach (UIElement el in VoiceParticipants.Children)
+                {
+                    if (el is StackPanel sp && sp.Tag?.ToString() == tag)
+                    {
+                        toRemove = el;
+                        break;
+                    }
+                }
+                if (toRemove != null)
+                    VoiceParticipants.Children.Remove(toRemove);
+            }
         }
 
         private void AddMessageToUI(string senderName, string senderAvatarurl, string content)
