@@ -1,6 +1,7 @@
 using isegoria_wpf.Models;
 using isegoria_wpf.Services;
 using isegoria_wpf.Views.Buttons;
+using isegoria_wpf.Views.Modals;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -165,14 +166,11 @@ namespace isegoria_wpf.Views
         private void Setting_Click(object sender, RoutedEventArgs e)
         {
             // 나중에 모달 연결
-        }
+            var modal = new ProfileModal();
+            modal.Owner = Window.GetWindow(this);
 
-        //private void VoiceChannel_Click(object sender, RoutedEventArgs e)
-        //{
-        //    VoiceParticipants.Visibility = Visibility.Visible;
-        //    VoiceStatusBar.Visibility = Visibility.Visible;
-        //    VoiceChannelNameText.Text = "음성채널1 / 서버이름";
-        //}
+            modal.ShowDialog();
+        }
 
         private void LeaveVoice_Click(object sender, RoutedEventArgs e)
         {
