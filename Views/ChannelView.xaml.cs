@@ -1,4 +1,5 @@
 using isegoria_wpf.Models;
+using isegoria_wpf.Models.Dtos;
 using isegoria_wpf.Services;
 using isegoria_wpf.Views.Buttons;
 using isegoria_wpf.Views.Modals;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -36,7 +38,6 @@ namespace isegoria_wpf.Views
             UsernameText.Text = User.CurrentUser?.Username ?? "사용자명";
             UserTagText.Text = $"#{User.CurrentUser?.Id:D4}";
 
-            //this.Loaded += async (s, e) => await LoadMembersAsync();
             this.Loaded += (s, e) =>
             {
                 _ = LoadMembersAsync();
@@ -53,7 +54,6 @@ namespace isegoria_wpf.Views
                     _currentTextChannelId = 0;
                 }
 
-                // 음성 채널 참여 중이면 자원 해제
                 if (_currentVoiceChannelId != 0)
                 {
                     _ = VoiceClient.Instance.LeaveVoiceChannelAsync();
@@ -66,9 +66,10 @@ namespace isegoria_wpf.Views
                 _members = null;
             };
 
+            ChatScrollViewer.ScrollChanged += ChatScrollViewer_ScrollChanged;
             MessageInput.KeyDown += MessageInput_KeyDown;
         }
-        
+
 
         //===================================================================================//
 
@@ -79,6 +80,9 @@ namespace isegoria_wpf.Views
 
         private List<(long id, string name)> textChannelList = [];
         private List<MemberInfo>? _members;
+
+        private bool _isLoadingMessages = false; // 중복 요청 방지 플래그
+        private long _oldestMessageId = 0;
 
         //===================================================================================//
 
@@ -191,19 +195,16 @@ namespace isegoria_wpf.Views
             VoiceChannelList.Children.Clear();
             textChannelList.Clear();
 
-            // 첫 번째 텍스트 채널을 기억할 변수
             ChannelInfo? firstTextChannel = null;
 
             foreach (var channel in channels)
             {
                 if (channel.Type == "TEXT")
                 {
-                    // CreateChannelButtonAsync에서 자동조인 코드를 뺐으므로 await만 수행하여 버튼을 받음
                     var btn = await CreateChannelButtonAsync(channel);
                     TextChannelList.Children.Add(btn);
                     textChannelList.Add((channel.Id, channel.Name));
 
-                    // 첫 번째 채팅 채널 저장
                     if (firstTextChannel == null)
                     {
                         firstTextChannel = channel;
@@ -216,7 +217,6 @@ namespace isegoria_wpf.Views
                 }
             }
 
-            // 루프가 끝나고 화면 배치가 완료된 후에 첫 번째 채널에 딱 한 번만 자동 입장
             if (firstTextChannel != null)
             {
                 await JoinTextChannelAsync(firstTextChannel);
@@ -249,9 +249,9 @@ namespace isegoria_wpf.Views
             OfflineMemberList.Children.Clear();
 
             // RealtimeClient.Instance.OnlineUserIds 기준 최신화
-            var updatedMembers = _members.Select(m => m with 
-            { 
-                IsOnline = RealtimeClient.Instance.OnlineUserIds.Contains(m.UserId) 
+            var updatedMembers = _members.Select(m => m with
+            {
+                IsOnline = RealtimeClient.Instance.OnlineUserIds.Contains(m.UserId)
             }).ToList();
 
             var onlineList = updatedMembers.Where(m => m.IsOnline).ToList();
@@ -324,24 +324,16 @@ namespace isegoria_wpf.Views
                 Debug.WriteLine($"기존 채널 퇴장 요청: {_currentTextChannelId}");
             }
 
-            // 현재 활성화된 채널 ID 저장
             _currentTextChannelId = channel.Id;
-
-            // 상단 헤더에 현재 채널명 표시
             CurrentChannelNameText.Text = channel.Name;
-
-            // C++ 소켓 서버에 JOIN_TEXT 패킷 전송
             await RealtimeClient.Instance.SendPacketAsync(new
             {
                 type = "JOIN_TEXT",
-                channelId = channel.Id // _currentTextChannelId 대신 직관적으로 channel.Id 사용
+                channelId = _currentTextChannelId
             });
-
-            // 채널 입장 시 기존 메시지 목록 비우기 
             MessageList.Children.Clear();
 
-            // @TODO해당 채널의 이전 채팅 기록 HTTP 호출
-            // await LoadChannelMessagesAsync(channel.Id);
+            await LoadChannelMessagesAsync(channel.Id);
 
             Debug.WriteLine($"채널 자동/수동 입장 완료: {channel.Name}");
         }
@@ -375,6 +367,7 @@ namespace isegoria_wpf.Views
                 }
                 else if (type == "VOICE_STATE")
                 {
+                    Debug.WriteLine("왔냐");
                     if (json.TryGetProperty("userId", out var userProp) &&
                         json.TryGetProperty("channelId", out var chProp) &&
                         json.TryGetProperty("joined", out var joinProp))
@@ -383,8 +376,7 @@ namespace isegoria_wpf.Views
                         long voiceChannelId = (long)chProp.GetUInt64();
                         bool joined = joinProp.GetBoolean();
 
-                        Debug.WriteLine("나여");
-                        Debug.WriteLine(voiceUserId);
+                        Debug.WriteLine("나여 :" ,voiceUserId);
                         UpdateVoiceParticipantsUI(voiceUserId, joined);
                     }
                 }
@@ -464,7 +456,7 @@ namespace isegoria_wpf.Views
             }
         }
 
-        private void AddMessageToUI(string senderName, string senderAvatarurl, string content)
+        private void AddMessageToUI(string senderName,string senderAvatarurl,string content,string? createdAt = null,bool autoScroll = true, bool prepend = false)
         {
             var item = new StackPanel
             {
@@ -472,19 +464,31 @@ namespace isegoria_wpf.Views
                 Margin = new Thickness(0, 0, 0, 12)
             };
 
-            // 프로필 이미지
-            var ellipse = new Ellipse { Width = 36, Height = 36, Margin = new Thickness(0, 0, 10, 0) };
-            
-            string avatarUri = (!string.IsNullOrEmpty(senderAvatarurl) && senderAvatarurl != "null")
+            var ellipse = new Ellipse
+            {
+                Width = 36,
+                Height = 36,
+                Margin = new Thickness(0, 0, 10, 0)
+            };
+
+            string avatarUri =
+                (!string.IsNullOrEmpty(senderAvatarurl) && senderAvatarurl != "null")
                 ? senderAvatarurl
                 : "pack://application:,,,/Assets/default_profile.png";
 
-            ellipse.Fill = new ImageBrush(new BitmapImage(new Uri(avatarUri, UriKind.RelativeOrAbsolute)));
+            ellipse.Fill = new ImageBrush(
+                new BitmapImage(new Uri(avatarUri, UriKind.RelativeOrAbsolute)));
 
-            // 텍스트 영역
-            var textPanel = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+            var textPanel = new StackPanel
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
 
-            var namePanel = new StackPanel { Orientation = Orientation.Horizontal };
+            var namePanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
             namePanel.Children.Add(new TextBlock
             {
                 Text = senderName,
@@ -493,9 +497,22 @@ namespace isegoria_wpf.Views
                 FontWeight = FontWeights.SemiBold,
                 Margin = new Thickness(0, 0, 8, 0)
             });
+
+            string displayTime;
+
+            if (!string.IsNullOrEmpty(createdAt)
+                && DateTime.TryParse(createdAt, out DateTime parsedTime))
+            {
+                displayTime = parsedTime.ToString("tt h:mm");
+            }
+            else
+            {
+                displayTime = DateTime.Now.ToString("tt h:mm");
+            }
+
             namePanel.Children.Add(new TextBlock
             {
-                Text = DateTime.Now.ToString("tt h:mm"),
+                Text = displayTime,
                 Foreground = new SolidColorBrush(Color.FromRgb(0x88, 0x78, 0xCC)),
                 FontSize = 11,
                 VerticalAlignment = VerticalAlignment.Center
@@ -515,11 +532,104 @@ namespace isegoria_wpf.Views
             item.Children.Add(ellipse);
             item.Children.Add(textPanel);
 
-            MessageList.Children.Add(item);
+            if (prepend)
+            {
+                MessageList.Children.Insert(0, item);
+            }
+            else
+            {
+                MessageList.Children.Add(item);
+            }
 
-            // 스크롤 맨 아래로
-            var scrollViewer = GetScrollViewer(MessageList);
-            scrollViewer?.ScrollToEnd();
+            if (autoScroll)
+            {
+                ScrollToBottom();
+            }
+        }
+
+        private async Task LoadChannelMessagesAsync(long channelId, long lastMessageId = 0, int size = 50)
+        {
+            try
+            {
+                string jsonResult =
+                    await ApiClient.getMessages(channelId, lastMessageId, size);
+
+                if (string.IsNullOrEmpty(jsonResult))
+                    return;
+
+                using JsonDocument doc = JsonDocument.Parse(jsonResult);
+
+                if (!doc.RootElement.TryGetProperty("body", out JsonElement dataElement))
+                    return;
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                var messages = JsonSerializer.Deserialize<List<MessageDto.MessageResponse>>(dataElement.GetRawText(),options);
+
+                if (messages == null || messages.Count == 0)
+                    return;
+
+                messages.Reverse();
+
+                _oldestMessageId = messages.First().id;
+
+                bool isPaging = lastMessageId != 0;
+
+                foreach (var msg in messages)
+                {
+                    AddMessageToUI(msg.senderName,msg.senderImage,msg.content,msg.createdAt,autoScroll: false,prepend: isPaging);
+                }
+
+                if (!isPaging)
+                {
+                    ScrollToBottom();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"LoadChannelMessagesAsync 에러: {ex.Message}");
+            }
+        }
+
+        private void ScrollToBottom()
+        {
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() =>
+            {
+                ChatScrollViewer.ScrollToEnd();
+            }));
+        }
+
+        private async void ChatScrollViewer_ScrollChanged(object sender,ScrollChangedEventArgs e)
+        {
+            if (ChatScrollViewer.VerticalOffset > 0)
+                return;
+
+            if (_isLoadingMessages)
+                return;
+
+            if (_oldestMessageId == 0)
+                return;
+
+            _isLoadingMessages = true;
+
+            double oldHeight = ChatScrollViewer.ExtentHeight;
+
+            await LoadChannelMessagesAsync(
+                _currentTextChannelId,
+                _oldestMessageId
+            );
+
+            _ = Dispatcher.BeginInvoke(() =>
+            {
+                ChatScrollViewer.ScrollToVerticalOffset(
+                    ChatScrollViewer.ExtentHeight - oldHeight
+                );
+            });
+
+            _isLoadingMessages = false;
         }
     }
 }

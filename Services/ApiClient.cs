@@ -6,10 +6,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Reflection.Metadata;
 using System.Text;
+using System.Threading.Channels;
 using static isegoria_wpf.Models.Dtos.AuthDto;
-using static isegoria_wpf.Models.Dtos.MessageDto;
 using static isegoria_wpf.Models.Dtos.channelDto;
+using static isegoria_wpf.Models.Dtos.MessageDto;
 using static isegoria_wpf.Models.Dtos.ServerDto;
 
 namespace isegoria_wpf.Services
@@ -156,7 +158,7 @@ namespace isegoria_wpf.Services
         //====================================================================================//
 
         // [POST] 메세지 생성
-        // POST /api/message/create        
+        // POST /api/messages/create        
         public static async Task<bool> CreateMessageAsync(long channelId, string content)
         {
             try
@@ -168,18 +170,43 @@ namespace isegoria_wpf.Services
                 Debug.WriteLine($"상태코드: {response.StatusCode}");
                 Debug.WriteLine($"응답 원문: {raw}");
 
-                //var result = System.Text.Json.JsonSerializer.Deserialize<ServerResponse>(raw);
-
-                //Debug.WriteLine($"=== 메세지 생성 결과 ===");
-                //Debug.WriteLine($"server.Name: {result?.Body?.Name ?? "null"}");
-                //Debug.WriteLine($"server.IconUrl: {result?.Body?.IconUrl ?? "null"}");
-
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"CreateServerAsync error: {ex.Message}");
                 return false;
+            }
+        }
+
+        // [GET] 이전 메세지 리스트 가져오기
+        // GET /api/messages/channels/{channelId}/messages?lastMessageId={id}&size={size}
+        public static async Task<string> getMessages(long channelId, long lastMessageId, int size)
+        {
+            try
+            {
+                string requestUrl;
+                if (lastMessageId == 0)
+                {
+                    requestUrl = $"api/messages/channels/{channelId}/messages?size={size}";
+                }
+                else
+                {
+                    requestUrl = $"api/messages/channels/{channelId}/messages?lastMessageId={lastMessageId}&size={size}";
+                }
+                var response = await ApiClient._client.GetAsync(requestUrl);
+
+                var raw = await response.Content.ReadAsStringAsync();
+
+                Debug.WriteLine($"[API GET MESSAGES] 상태코드: {response.StatusCode}");
+                Debug.WriteLine($"[API GET MESSAGES] 응답 원문: {raw}");
+
+                return raw;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetMessageAsync error: {ex.Message}");
+                return null;
             }
         }
 

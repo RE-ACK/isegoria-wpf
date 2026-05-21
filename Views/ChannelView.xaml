@@ -297,10 +297,10 @@
             </Border>
 
             <!-- 메시지 목록 -->
-            <ScrollViewer Grid.Row="1"
-                          VerticalScrollBarVisibility="Hidden">
+            <ScrollViewer x:Name="ChatScrollViewer" Grid.Row="1"
+              VerticalScrollBarVisibility="Hidden">
                 <StackPanel x:Name="MessageList"
-                            Margin="16,16,16,0" />
+                Margin="16,16,16,0" />
             </ScrollViewer>
 
             <!-- 입력창 -->

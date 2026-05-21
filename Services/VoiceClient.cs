@@ -5,6 +5,7 @@ using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -332,7 +333,7 @@ namespace isegoria_wpf.Services
 
                     int opusLength = data.Length - UDP_HEADER_BYTES;
                     if (opusLength <= 0) continue;
-
+                    
                     UserVoiceStream stream;
                     lock (_userStreams)
                     {
@@ -352,7 +353,7 @@ namespace isegoria_wpf.Services
                     short[] decodedPcm = new short[FRAME_SAMPLES];
 
                     int decodedSamples = stream.Decoder.Decode(opusPayload.AsSpan(), decodedPcm.AsSpan(0, FRAME_SAMPLES), FRAME_SAMPLES);
-
+                    
                     if (decodedSamples > 0)
                     {
                         byte[] pcmBytes = new byte[decodedSamples * 2];
