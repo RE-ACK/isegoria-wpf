@@ -1,0 +1,182 @@
+﻿<UserControl x:Class="isegoria_wpf.Views.WelcomeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:isegoria_wpf.Views"
+             mc:Ignorable="d"
+             d:DesignHeight="640"
+             d:DesignWidth="1180">
+    <UserControl.Resources>
+        <!-- 서버 생성 버튼 스타일 -->
+        <Style x:Key="CardButtonStyle"
+               TargetType="Button">
+            <Setter Property="Height"
+                    Value="45" />
+            <Setter Property="FontFamily"
+                    Value="{StaticResource Pretendard}" />
+            <Setter Property="FontSize"
+                    Value="16" />
+            <Setter Property="FontWeight"
+                    Value="ExtraBold" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Padding"
+                    Value="68 68 12 12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                CornerRadius="10"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Opacity"
+                                        Value="0.88" />
+                            </Trigger>
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                        Property="Opacity"
+                                        Value="0.75" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="{StaticResource BackgroundColor}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- 타이틀 -->
+            <RowDefinition Height="*" />
+            <!-- 카드 -->
+        </Grid.RowDefinitions>
+
+        <!-- 타이틀 -->
+        <StackPanel Grid.Row="0"
+                    VerticalAlignment="Center"
+                    Margin="60,40,60,40">
+            <TextBlock Text="ISEGORIA"
+                       HorizontalAlignment="Center"
+                       FontFamily="{StaticResource IrishGrover}"
+                       Foreground="White"
+                       FontSize="26"
+                       Margin="0,0,0,10" />
+
+            <TextBlock Text="새로운 커뮤니티에 합류하거나, 직접 서버를 개설하여 당신만의 이야기를 시작해 보세요."
+                       HorizontalAlignment="Center"
+                       FontFamily="{StaticResource Pretendard}"
+                       Foreground="White"
+                       FontSize="16"
+                       Margin="0,0,0,40" />
+        </StackPanel>
+        <!-- 카드 두 개 -->
+        <Grid Grid.Row="1"
+              Margin="60,0,60,40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="16" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 서버 만들기 카드 -->
+            <Border Grid.Column="0"
+                    CornerRadius="12"
+                    BorderBrush="{StaticResource CreateServerColor}"
+                    BorderThickness="1">
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+
+                    <Border Width="50"
+                            Height="50"
+                            CornerRadius="10"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,16">
+                        <Border.Background>
+                            <StaticResource ResourceKey="CreateServerColor" />
+                        </Border.Background>
+                        <Image Source="/Assets/add_icon.png"
+                               Width="24"
+                               Height="24" />
+                    </Border>
+
+                    <TextBlock Text="서버 만들기"
+                               Foreground="White"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,24" />
+
+                    <TextBlock Text="나만의 서버를 직접 만들고 친구들을 초대하세요"
+                               Foreground="White"
+                               FontWeight="Normal"
+                               FontSize="16"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,24" />
+
+                    <Button Content="지금 생성하기"
+                            Style="{StaticResource CardButtonStyle}"
+                            Background="{StaticResource CreateServerColor}"
+                            Click="CreateServerButton_Click"
+                            Width="180" />
+                </StackPanel>
+            </Border>
+
+            <!-- 서버 참여하기 카드 -->
+            <Border Grid.Column="2"
+                    CornerRadius="12"
+                    BorderBrush="{StaticResource JoinServerColor}"
+                    BorderThickness="1">
+                <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+
+                    <Border Width="50"
+                            Height="50"
+                            CornerRadius="10"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,24">
+                        <Border.Background>
+                            <StaticResource ResourceKey="JoinServerColor" />
+                        </Border.Background>
+                        <Image Source="/Assets/search_icon.png"
+                               Width="24"
+                               Height="24" />
+                    </Border>
+
+                    <TextBlock Text="서버 참여 하기"
+                               Foreground="White"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,24" />
+
+                    <TextBlock Text="초대 코드를 입력하여 서버에 입장하세요"
+                               Foreground="White"
+                               FontSize="16"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,24" />
+
+                    <Button Content="입장코드 입력하기"
+                            Style="{StaticResource CardButtonStyle}"
+                            Background="{StaticResource JoinServerColor}"
+                            Click="JoinServerButton_Click"
+                            Width="180" />
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Grid>
+
+</UserControl>
