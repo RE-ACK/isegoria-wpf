@@ -60,8 +60,8 @@ namespace isegoria_wpf.Views
                     _currentVoiceChannelId = 0;
                 }
 
-                VoiceParticipants.Children.Clear();
-                VoiceParticipants.Visibility = Visibility.Collapsed;
+                //VoiceParticipants.Children.Clear();
+                //VoiceParticipants.Visibility = Visibility.Collapsed;
                 VoiceStatusBar.Visibility = Visibility.Collapsed;
                 _members = null;
             };
@@ -84,6 +84,7 @@ namespace isegoria_wpf.Views
         private bool _isLoadingMessages = false; // 중복 요청 방지 플래그
         private long _oldestMessageId = 0;
 
+        private Dictionary<long, StackPanel> _voiceParticipantPanels = new();
         //===================================================================================//
 
         private void Add_File_Click(object sender, RoutedEventArgs e)
@@ -179,10 +180,10 @@ namespace isegoria_wpf.Views
         private void LeaveVoice_Click(object sender, RoutedEventArgs e)
         {
             _ = VoiceClient.Instance.LeaveVoiceChannelAsync();
+
             _currentVoiceChannelId = 0;
-            VoiceParticipants.Visibility = Visibility.Collapsed;
+
             VoiceStatusBar.Visibility = Visibility.Collapsed;
-            VoiceParticipants.Children.Clear();
         }
 
         //채널 목록 불러오기
@@ -212,8 +213,24 @@ namespace isegoria_wpf.Views
                 }
                 else if (channel.Type == "VOICE")
                 {
+                    var container = new StackPanel
+                    {
+                        Margin = new Thickness(0, 0, 0, 4)
+                    };
+
                     var btn = await CreateChannelButtonAsync(channel);
-                    VoiceChannelList.Children.Add(btn);
+
+                    var participantPanel = new StackPanel
+                    {
+                        Margin = new Thickness(34, 2, 0, 6)
+                    };
+
+                    _voiceParticipantPanels[channel.Id] = participantPanel;
+
+                    container.Children.Add(btn);
+                    container.Children.Add(participantPanel);
+
+                    VoiceChannelList.Children.Add(container);
                 }
             }
 
@@ -221,6 +238,11 @@ namespace isegoria_wpf.Views
             {
                 await JoinTextChannelAsync(firstTextChannel);
             }
+
+            await RealtimeClient.Instance.SendPacketAsync(new
+            {
+                type = "VOICE_USERS_REQUEST"
+            });
         }
 
         public async Task LoadMembersAsync()
@@ -367,7 +389,6 @@ namespace isegoria_wpf.Views
                 }
                 else if (type == "VOICE_STATE")
                 {
-                    Debug.WriteLine("왔냐");
                     if (json.TryGetProperty("userId", out var userProp) &&
                         json.TryGetProperty("channelId", out var chProp) &&
                         json.TryGetProperty("joined", out var joinProp))
@@ -377,7 +398,24 @@ namespace isegoria_wpf.Views
                         bool joined = joinProp.GetBoolean();
 
                         Debug.WriteLine("나여 :" ,voiceUserId);
-                        UpdateVoiceParticipantsUI(voiceUserId, joined);
+                        UpdateVoiceParticipantsUI(voiceChannelId,voiceUserId,joined);
+                    }
+                }
+                else if (type == "VOICE_USERS")
+                {
+                    long channelId = json.GetProperty("channelId").GetInt64();
+
+                    var users = json.GetProperty("users");
+
+                    if (_voiceParticipantPanels.TryGetValue(channelId, out var panel))
+                    {
+                        panel.Children.Clear();
+
+                        foreach (var user in users.EnumerateArray())
+                        {
+                            long uid = user.GetInt64();
+                            UpdateVoiceParticipantsUI(channelId, uid, true);
+                        }
                     }
                 }
             });
@@ -385,35 +423,48 @@ namespace isegoria_wpf.Views
 
         private async Task JoinVoiceChannelAsync(ChannelInfo channel)
         {
-            if (_currentVoiceChannelId == channel.Id) return;
+            // 이미 같은 채널이면 무시
+            if (_currentVoiceChannelId == channel.Id)
+                return;
+
+            // 기존 채널 나가기
+            if (_currentVoiceChannelId != 0)
+            {
+                await VoiceClient.Instance.LeaveVoiceChannelAsync();
+            }
 
             _currentVoiceChannelId = channel.Id;
 
-            // VoiceClient에 입장 요청
+            // 새 채널 입장
             await VoiceClient.Instance.JoinVoiceChannelAsync(channel.Id);
 
-            // VoiceStatusBar 상단에 채널명 표시 및 상태 바 활성화
             VoiceChannelNameText.Text = $"{channel.Name}";
-            VoiceParticipants.Visibility = Visibility.Visible;
             VoiceStatusBar.Visibility = Visibility.Visible;
         }
 
-        private void UpdateVoiceParticipantsUI(long userId, bool joined)
+        private void UpdateVoiceParticipantsUI(long channelId, long userId, bool joined)
         {
+            if (!_voiceParticipantPanels.TryGetValue(channelId, out var panel))
+                return;
+
             string tag = $"voice_user_{userId}";
 
             if (joined)
             {
-                // 이미 존재하면 추가하지 않음
-                foreach (UIElement el in VoiceParticipants.Children)
+                // 이미 존재하면 추가 안함
+                foreach (UIElement el in panel.Children)
                 {
-                    if (el is StackPanel sp && sp.Tag?.ToString() == tag) return;
+                    if (el is StackPanel sp && sp.Tag?.ToString() == tag)
+                        return;
                 }
 
-                // 해당 멤버 정보 조회
                 var member = _members?.FirstOrDefault(m => m.UserId == userId);
+
                 string displayName = member?.Username ?? $"유저 {userId}";
-                string avatarUrl = (!string.IsNullOrEmpty(member?.AvatarUrl) && member?.AvatarUrl != "null")
+
+                string avatarUrl =
+                    (!string.IsNullOrEmpty(member?.AvatarUrl) &&
+                     member?.AvatarUrl != "null")
                     ? member!.AvatarUrl!
                     : "pack://application:,,,/Assets/default_profile.png";
 
@@ -424,8 +475,16 @@ namespace isegoria_wpf.Views
                     Tag = tag
                 };
 
-                var ellipse = new Ellipse { Width = 15, Height = 15, Margin = new Thickness(0, 0, 8, 0) };
-                ellipse.Fill = new ImageBrush(new BitmapImage(new Uri(avatarUrl, UriKind.RelativeOrAbsolute)));
+                var ellipse = new Ellipse
+                {
+                    Width = 15,
+                    Height = 15,
+                    Margin = new Thickness(0, 0, 8, 0)
+                };
+
+                ellipse.Fill = new ImageBrush(
+                    new BitmapImage(
+                        new Uri(avatarUrl, UriKind.RelativeOrAbsolute)));
 
                 var nameText = new TextBlock
                 {
@@ -437,22 +496,25 @@ namespace isegoria_wpf.Views
 
                 row.Children.Add(ellipse);
                 row.Children.Add(nameText);
-                VoiceParticipants.Children.Add(row);
+
+                panel.Children.Add(row);
             }
             else
             {
-                // 퇴장한 유저 행 제거
                 UIElement? toRemove = null;
-                foreach (UIElement el in VoiceParticipants.Children)
+
+                foreach (UIElement el in panel.Children)
                 {
-                    if (el is StackPanel sp && sp.Tag?.ToString() == tag)
+                    if (el is StackPanel sp &&
+                        sp.Tag?.ToString() == tag)
                     {
                         toRemove = el;
                         break;
                     }
                 }
+
                 if (toRemove != null)
-                    VoiceParticipants.Children.Remove(toRemove);
+                    panel.Children.Remove(toRemove);
             }
         }
 

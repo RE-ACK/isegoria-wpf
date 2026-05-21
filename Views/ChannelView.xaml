@@ -80,11 +80,11 @@
                         <StackPanel x:Name="VoiceChannelList"/>
 
                         <!-- 참여자 목록 (항상 표시, 없으면 Collapsed) -->
-                        <StackPanel x:Name="VoiceParticipants"
+                        <!-- <StackPanel x:Name="VoiceParticipants"
                                     Visibility="Collapsed"
                                     Margin="34,0,0,0">
                             
-                        </StackPanel>
+                        </StackPanel>-->
                     </StackPanel>
                 </ScrollViewer>
 
