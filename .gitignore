@@ -352,3 +352,13 @@ Temporary Items
 # Exceptions to the exclusions
 !src/Microsoft.DotNet.Wpf/src/WpfGfx/codegen/mcg/main/*.rsp
 !src/Microsoft.DotNet.Wpf/src/WpfGfx/tools/csp/**/*.rsp
+
+# 민감 정보 / 설정 파일
+appsettings.*.json
+secrets.json
+*.pfx
+# Inno Setup 빌드 결과물
+Output/
+*.exe
+# 개발 환경 설정
+launchSettings.json

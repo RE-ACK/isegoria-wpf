@@ -4,6 +4,7 @@ AppVersion=1.0
 DefaultDirName={pf}\Isegoria
 DefaultGroupName=Isegoria
 OutputBaseFilename=isegoria-setup
+OutputDir=D:\311\isegoria\installer
 Compression=lzma
 SolidCompression=yes
 
@@ -12,8 +13,8 @@ Source: "D:\311\isegoria\isegoria-wpf\bin\Release\net10.0-windows\win-x64\publis
         DestDir: "{app}"; Flags: recursesubdirs
 
 [Icons]
-Name: "{group}\Isegoria"; Filename: "{app}\isegoria-wpf.exe"
-Name: "{commondesktop}\Isegoria"; Filename: "{app}\isegoria-wpf.exe"
+Name: "{group}\Isegoria"; Filename: "{app}\isegoria.exe"
+Name: "{commondesktop}\Isegoria"; Filename: "{app}\isegoria.exe"
 
 [Run]
-Filename: "{app}\isegoria-wpf.exe"; Description: "Isegoria 실행"; Flags: nowait postinstall
+Filename: "{app}\isegoria.exe"; Description: "Isegoria 실행"; Flags: nowait postinstall

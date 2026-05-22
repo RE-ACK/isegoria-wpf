@@ -9,6 +9,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>isegoria_icon.ico</ApplicationIcon>
     <PackageIcon>isegoria_icon.png</PackageIcon>
+   <AssemblyName>Isegoria</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +34,9 @@
     <None Remove="Assets\user_edit_icon.png" />
     <None Remove="Assets\voice_icon.png" />
     <None Remove="Assets\voice_mute_icon.png" />
+    <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

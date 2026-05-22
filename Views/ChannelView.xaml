@@ -298,9 +298,17 @@
 
             <!-- 메시지 목록 -->
             <ScrollViewer x:Name="ChatScrollViewer" Grid.Row="1"
-              VerticalScrollBarVisibility="Hidden">
-                <StackPanel x:Name="MessageList"
-                Margin="16,16,16,0" />
+              VerticalScrollBarVisibility="Hidden"
+              HorizontalScrollBarVisibility="Disabled">
+                <ItemsControl x:Name="MessageList"
+                              Margin="16,16,16,0"
+                              HorizontalContentAlignment="Stretch">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
             </ScrollViewer>
 
             <!-- 입력창 -->
@@ -400,7 +408,7 @@
                        Margin="8,0,0,8"/>
                     <StackPanel x:Name="OnlineMemberList" Margin="8,0,0,8"/>
 
-     
+
                     <!-- 오프라인 -->
                     <TextBlock x:Name="OfflineCountText"
                                Text="오프라인"
@@ -410,8 +418,8 @@
                                Margin="8,16,0,8" />
 
                     <StackPanel x:Name="OfflineMemberList" Margin="8,0,0,8">
-                        
-                        
+
+
                     </StackPanel>
 
                 </StackPanel>

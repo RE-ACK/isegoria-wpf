@@ -353,7 +353,7 @@ namespace isegoria_wpf.Views
                 type = "JOIN_TEXT",
                 channelId = _currentTextChannelId
             });
-            MessageList.Children.Clear();
+            MessageList.Items.Clear();
 
             await LoadChannelMessagesAsync(channel.Id);
 
@@ -397,8 +397,8 @@ namespace isegoria_wpf.Views
                         long voiceChannelId = (long)chProp.GetUInt64();
                         bool joined = joinProp.GetBoolean();
 
-                        Debug.WriteLine("나여 :" ,voiceUserId);
-                        UpdateVoiceParticipantsUI(voiceChannelId,voiceUserId,joined);
+                        Debug.WriteLine("나여 :", voiceUserId);
+                        UpdateVoiceParticipantsUI(voiceChannelId, voiceUserId, joined);
                     }
                 }
                 else if (type == "VOICE_USERS")
@@ -518,20 +518,24 @@ namespace isegoria_wpf.Views
             }
         }
 
-        private void AddMessageToUI(string senderName,string senderAvatarurl,string content,string? createdAt = null,bool autoScroll = true, bool prepend = false)
+        private void AddMessageToUI(string senderName, string senderAvatarurl, string content, string? createdAt = null, bool autoScroll = true, bool prepend = false)
         {
-            var item = new StackPanel
+            // StackPanel(Horizontal) 대신 Grid 사용 → Star 컬럼이 실제 너비를 받아 TextWrapping 동작
+            var item = new Grid
             {
-                Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 12)
             };
+            item.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });   // 아바타
+            item.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }); // 텍스트
 
             var ellipse = new Ellipse
             {
                 Width = 36,
                 Height = 36,
-                Margin = new Thickness(0, 0, 10, 0)
+                Margin = new Thickness(0, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Top
             };
+            Grid.SetColumn(ellipse, 0);
 
             string avatarUri =
                 (!string.IsNullOrEmpty(senderAvatarurl) && senderAvatarurl != "null")
@@ -545,6 +549,7 @@ namespace isegoria_wpf.Views
             {
                 VerticalAlignment = VerticalAlignment.Center
             };
+            Grid.SetColumn(textPanel, 1);
 
             var namePanel = new StackPanel
             {
@@ -596,11 +601,11 @@ namespace isegoria_wpf.Views
 
             if (prepend)
             {
-                MessageList.Children.Insert(0, item);
+                MessageList.Items.Insert(0, item);
             }
             else
             {
-                MessageList.Children.Add(item);
+                MessageList.Items.Add(item);
             }
 
             if (autoScroll)
@@ -629,7 +634,7 @@ namespace isegoria_wpf.Views
                     PropertyNameCaseInsensitive = true
                 };
 
-                var messages = JsonSerializer.Deserialize<List<MessageDto.MessageResponse>>(dataElement.GetRawText(),options);
+                var messages = JsonSerializer.Deserialize<List<MessageDto.MessageResponse>>(dataElement.GetRawText(), options);
 
                 if (messages == null || messages.Count == 0)
                     return;
@@ -642,7 +647,7 @@ namespace isegoria_wpf.Views
 
                 foreach (var msg in messages)
                 {
-                    AddMessageToUI(msg.senderName,msg.senderImage,msg.content,msg.createdAt,autoScroll: false,prepend: isPaging);
+                    AddMessageToUI(msg.senderName, msg.senderImage, msg.content, msg.createdAt, autoScroll: false, prepend: isPaging);
                 }
 
                 if (!isPaging)
@@ -664,7 +669,7 @@ namespace isegoria_wpf.Views
             }));
         }
 
-        private async void ChatScrollViewer_ScrollChanged(object sender,ScrollChangedEventArgs e)
+        private async void ChatScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (ChatScrollViewer.VerticalOffset > 0)
                 return;
