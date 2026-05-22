@@ -181,7 +181,7 @@ namespace isegoria_wpf.Services
 
         // [GET] 이전 메세지 리스트 가져오기
         // GET /api/messages/channels/{channelId}/messages?lastMessageId={id}&size={size}
-        public static async Task<string> getMessages(long channelId, long lastMessageId, int size)
+        public static async Task<string?> getMessages(long channelId, long lastMessageId, int size)
         {
             try
             {

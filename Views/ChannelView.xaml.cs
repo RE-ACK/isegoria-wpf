@@ -613,7 +613,7 @@ namespace isegoria_wpf.Views
         {
             try
             {
-                string jsonResult =
+                string? jsonResult =
                     await ApiClient.getMessages(channelId, lastMessageId, size);
 
                 if (string.IsNullOrEmpty(jsonResult))

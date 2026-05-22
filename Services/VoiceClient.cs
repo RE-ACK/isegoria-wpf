@@ -125,7 +125,13 @@ namespace isegoria_wpf.Services
             try
             {
                 _udpClient = new UdpClient(0);
-                int localPort = ((IPEndPoint)_udpClient.Client.LocalEndPoint).Port;
+
+                if (_udpClient.Client.LocalEndPoint is not IPEndPoint localEndPoint)
+                {
+                    throw new InvalidOperationException("로컬 엔드포인트를 IPEndPoint로 가져올 수 없습니다.");
+                }
+
+                int localPort = localEndPoint.Port;
 
                 var config = new ConfigurationBuilder()
                     .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
