@@ -60,8 +60,6 @@ namespace isegoria_wpf.Views
                     _currentVoiceChannelId = 0;
                 }
 
-                //VoiceParticipants.Children.Clear();
-                //VoiceParticipants.Visibility = Visibility.Collapsed;
                 VoiceStatusBar.Visibility = Visibility.Collapsed;
                 _members = null;
             };
@@ -385,7 +383,18 @@ namespace isegoria_wpf.Views
                 else if (type == "USER_STATE" || type == "SUBSCRIBE_STATUS_OK")
                 {
                     // 실시간 유저 상태 변경 또는 구독 리스트 수신 시 로컬 UI 갱신 (무한루프 없음)
-                    RenderMembers();
+                  
+                    long userId = json.TryGetProperty("userId", out var uidProp) ? uidProp.GetInt64() : 0;
+
+               
+                    if (userId != 0 && _members != null && !_members.Any(m => m.UserId == userId))
+                    {
+                        _ = LoadMembersAsync(); 
+                    }
+                    else
+                    {
+                        RenderMembers(); // 기존대로 온/오프라인만 갱신
+                    }
                 }
                 else if (type == "VOICE_STATE")
                 {
@@ -417,6 +426,10 @@ namespace isegoria_wpf.Views
                             UpdateVoiceParticipantsUI(channelId, uid, true);
                         }
                     }
+                }
+                else if (type == "USER_UPDATED")
+                {
+                    _ = LoadMembersAsync();
                 }
             });
         }

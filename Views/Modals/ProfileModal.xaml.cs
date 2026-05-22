@@ -115,6 +115,9 @@ namespace isegoria_wpf.Views.Modals
 
                 await vm.UpdateUserInfoCommand.ExecuteAsync(null);
 
+               
+
+
                 var mainWindow = Owner as MainWindow;
                 if (mainWindow != null)
                 {
@@ -128,7 +131,14 @@ namespace isegoria_wpf.Views.Modals
                         await channelView.LoadMembersAsync();
                     }
                 }
-                   
+
+                await RealtimeClient.Instance.SendPacketAsync(new
+                {
+                    type = "USER_UPDATED",
+                    userName = User.CurrentUser?.Username ?? "",
+                    avatarUrl = User.CurrentUser?.AvatarUrl ?? ""
+                });
+
                 this.Close();
             }
             catch (Exception ex)
