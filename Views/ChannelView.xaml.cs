@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -64,7 +65,7 @@ namespace isegoria_wpf.Views
                 _members = null;
             };
 
-            ChatScrollViewer.ScrollChanged += ChatScrollViewer_ScrollChanged;
+           ChatScrollViewer.ScrollChanged += ChatScrollViewer_ScrollChanged;
             MessageInput.KeyDown += MessageInput_KeyDown;
         }
 
@@ -175,6 +176,13 @@ namespace isegoria_wpf.Views
             modal.ShowDialog();
         }
 
+
+        private void InviteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var inviteModal = new InviteModal(_serverId);
+            inviteModal.Owner = Window.GetWindow(this);
+            inviteModal.ShowDialog();
+        }
         private void LeaveVoice_Click(object sender, RoutedEventArgs e)
         {
             _ = VoiceClient.Instance.LeaveVoiceChannelAsync();
@@ -355,7 +363,7 @@ namespace isegoria_wpf.Views
 
             await LoadChannelMessagesAsync(channel.Id);
 
-            Debug.WriteLine($"채널 자동/수동 입장 완료: {channel.Name}");
+           // Debug.WriteLine($"채널 자동/수동 입장 완료: {channel.Name}");
         }
 
         private void OnRealtimePacketReceived(string type, System.Text.Json.JsonElement json)
@@ -533,7 +541,6 @@ namespace isegoria_wpf.Views
 
         private void AddMessageToUI(string senderName, string senderAvatarurl, string content, string? createdAt = null, bool autoScroll = true, bool prepend = false)
         {
-            // StackPanel(Horizontal) 대신 Grid 사용 → Star 컬럼이 실제 너비를 받아 TextWrapping 동작
             var item = new Grid
             {
                 Margin = new Thickness(0, 0, 0, 12)
@@ -583,10 +590,13 @@ namespace isegoria_wpf.Views
             if (!string.IsNullOrEmpty(createdAt)
                 && DateTime.TryParse(createdAt, out DateTime parsedTime))
             {
+                if (parsedTime.Kind == DateTimeKind.Utc)
+                    parsedTime = parsedTime.ToLocalTime();
                 displayTime = parsedTime.ToString("tt h:mm");
             }
             else
             {
+                Debug.WriteLine($"createdAt raw: {createdAt}");
                 displayTime = DateTime.Now.ToString("tt h:mm");
             }
 
@@ -652,19 +662,27 @@ namespace isegoria_wpf.Views
                 if (messages == null || messages.Count == 0)
                     return;
 
-                messages.Reverse();
+              
 
-                _oldestMessageId = messages.First().id;
-
+                _oldestMessageId = messages.Last().id; //가장 오래된 ID가 마지막.
                 bool isPaging = lastMessageId != 0;
 
-                foreach (var msg in messages)
-                {
-                    AddMessageToUI(msg.senderName, msg.senderImage, msg.content, msg.createdAt, autoScroll: false, prepend: isPaging);
-                }
+                messages.Reverse();
 
-                if (!isPaging)
+                if (isPaging)
                 {
+                   
+                    for (int i = messages.Count - 1; i >= 0; i--)
+                    {
+                        var msg = messages[i];
+                        AddMessageToUI(msg.senderName, msg.senderImage, msg.content, msg.createdAt, autoScroll: false, prepend: true);
+                    }
+                 
+                }
+                else
+                {
+                    foreach (var msg in messages)
+                        AddMessageToUI(msg.senderName, msg.senderImage, msg.content, msg.createdAt, autoScroll: false, prepend: false);
                     ScrollToBottom();
                 }
             }
@@ -684,8 +702,12 @@ namespace isegoria_wpf.Views
 
         private async void ChatScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (ChatScrollViewer.VerticalOffset > 0)
+            if (e.VerticalOffset > 0)
                 return;
+
+            if (e.VerticalChange >= 0)
+                return;
+
 
             if (_isLoadingMessages)
                 return;

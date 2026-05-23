@@ -35,17 +35,46 @@
 
                 <!-- 서버 이름 -->
                 <Border Grid.Row="0"
-                        BorderBrush="{StaticResource ChannelBorderColor}"
-                        BorderThickness="0,0,0,1">
-                    <TextBlock x:Name="ServerNameText"
-                               Text="서버 이름"
-                               Foreground="White"
-                               FontSize="18"
-                               FontWeight="Medium"
-                               VerticalAlignment="Center"
-                               Padding="18,18,18,18" />
+                      BorderBrush="{StaticResource ChannelBorderColor}"
+                      BorderThickness="0,0,0,1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                           x:Name="ServerNameText"
+                           Text="서버 이름"
+                           Foreground="White"
+                           FontSize="18"
+                           FontWeight="Medium"
+                           VerticalAlignment="Center"
+                           Padding="18,18,18,18" />
+                        <Button Grid.Column="1"
+                            Margin="0,0,12,0"
+                            Cursor="Hand"
+                            Click="InviteButton_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="InviteBorder"
+                                        Background="Transparent"
+                                        CornerRadius="4"
+                                        Padding="4">
+                                        <Image Source="/Assets/add_icon.png"
+                                            Width="20" Height="20" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="InviteBorder"
+                                                Property="Background"
+                                                Value="#2A2640" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
                 </Border>
-
                 <!-- 채널 목록 -->
                 <ScrollViewer Grid.Row="1"
                               VerticalScrollBarVisibility="Hidden"

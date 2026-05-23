@@ -4,10 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:isegoria_wpf.Views.Modals"
+             Title="InviteModal"
              mc:Ignorable="d" 
-        
-             Height="320"
-             Width="560"
+             WindowStartupLocation="CenterOwner"
+             ResizeMode="NoResize"
+             WindowStyle="None"
+             AllowsTransparency="True"
+             Background="Transparent"
+             Height="190"
+             Width="500"
              >
     <Grid>
         <Border CornerRadius="12"
@@ -15,24 +20,44 @@
                 BorderBrush="{StaticResource BorderColor}"
                 BorderThickness="1"
                 ClipToBounds="True"
-                Width="560"
-                Height="320"
+                Width="500"
+                Height="190"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center">
 
             <StackPanel VerticalAlignment="Center"
-                        Margin="40,0">
+                        Margin="20,0">
 
                 <!-- 타이틀 -->
-                <TextBlock Text="서버  초대하기"
-                           Foreground="White"
-                           FontSize="22"
-                           FontWeight="Bold"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,32" />
+                <Grid Margin="0,0,0,15" >
+                    <TextBlock Text="서버  초대하기"
+                       Foreground="White"
+                       FontSize="22"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom" />
+                    <Button HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Cursor="Hand"
+                        Click="CloseButton_Click" Margin="400,0,0,0" 
+                        >
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="Transparent">
+                                    <Image 
+
+                                        Source="/Assets/close-circle.png"
+                                        Width="24" Height="24" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+
 
                 <!-- 라벨 -->
                 <TextBlock Text="서버 초대 링크 복사하기"
+                           FontFamily="{StaticResource Pretendard}"
                            Foreground="White"
                            FontSize="13"
                            FontWeight="SemiBold"
@@ -82,9 +107,9 @@
 
                 <!-- 안내 문구 -->
                 <TextBlock Text="초대 링크는 영구히 유지돼요."
-                           Foreground="{StaticResource BorderColor}"
+                           Foreground="White"
                            FontSize="12"
-                           Margin="0,10,0,0" />
+                           Margin="0,10,0,10" />
 
             </StackPanel>
         </Border>

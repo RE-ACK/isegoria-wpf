@@ -198,8 +198,8 @@ namespace isegoria_wpf.Services
 
                 var raw = await response.Content.ReadAsStringAsync();
 
-                Debug.WriteLine($"[API GET MESSAGES] 상태코드: {response.StatusCode}");
-                Debug.WriteLine($"[API GET MESSAGES] 응답 원문: {raw}");
+                //Debug.WriteLine($"[API GET MESSAGES] 상태코드: {response.StatusCode}");
+                //Debug.WriteLine($"[API GET MESSAGES] 응답 원문: {raw}");
 
                 return raw;
             }
@@ -399,7 +399,7 @@ namespace isegoria_wpf.Services
             {
                 var response = await ApiClient._client.GetAsync($"api/channels/all?serverId={serverId}");
                 var raw = await response.Content.ReadAsStringAsync();
-                Debug.WriteLine($"채널 목록 응답: {raw}");
+                //Debug.WriteLine($"채널 목록 응답: {raw}");
 
                 var result = System.Text.Json.JsonSerializer.Deserialize<ChannelListResponse>(raw);
                 return result?.Body;

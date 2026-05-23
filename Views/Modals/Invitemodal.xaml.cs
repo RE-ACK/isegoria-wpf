@@ -56,5 +56,10 @@ namespace isegoria_wpf.Views.Modals
             };
             timer.Start();
         }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
